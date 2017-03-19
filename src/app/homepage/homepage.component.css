@@ -1,0 +1,77 @@
+:host >>> sm-sidebar{
+    width: 300px;
+}
+
+sm-sidebar{
+    width: 200px !important
+}
+
+.left.sidebar{
+    width: 400px;
+}
+
+.ui.custom.sidebar {
+    width: 315px !important;
+}
+
+    :host >>>   .ui .left .vertical .sidebar{
+    width: 300px !important;
+}
+
+    .logoutButton:hover{
+        background-color: red;
+    }
+
+
+.navbar{
+    background: rgb(170, 0, 0);
+    background: -moz-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -webkit-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -o-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -ms-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: linear-gradient(125deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+}
+
+
+.dropdown .dropdown-menu{
+    background: rgb(170, 0, 0);
+    background: -moz-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -webkit-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -o-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -ms-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: linear-gradient(125deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+
+}
+
+.dropdown .dropdown-menu{
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.dropdown:hover .dropdown-menu:hover{
+    background-color: transparent;
+    color: #000;
+}
+
+.dropdown-item{
+    background-color: transparent;
+    color: white;
+}
+
+.navbar{
+    margin-bottom: 0;
+}
+
+.navbar .dropdown:hover > .dropdown-menu{
+    display:block;
+}
+
+.hvr-icon-sink-away:before{
+    content: "\f01a";
+    font-size: 17px;
+}
+
+.example-card{
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    margin-bottom: 30px;
+    font-family: 'Open Sans', sans-serif;
+}

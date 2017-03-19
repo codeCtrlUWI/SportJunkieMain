@@ -1,0 +1,16 @@
+<div class="ui-overlaypanel-content" style="margin-top: 120px;">
+  <button md-fab style="text-align: center;"  (click)="goBack()">
+    <md-icon ></md-icon> <-
+  </button>
+  <h1 *ngIf="article">{{article.title }}</h1>
+  <h3 *ngIf="article">{{article.subtitle }}</h3>
+  <a>Author: </a>
+  <a *ngIf="article">{{article.authorFname}} </a>
+  <a *ngIf="article">{{article.authorLname }}</a>
+  <br>
+  <a *ngIf="article">{{article.category }}</a>
+  <br>
+  <a *ngIf="article">{{article.articleData }}</a>
+
+
+</div>

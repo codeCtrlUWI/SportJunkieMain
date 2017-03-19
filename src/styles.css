@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css';
+@import url('https://fonts.googleapis.com/css?family=Russo+One');
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+@import "~primeng/resources/themes/omega/theme.css";
+@import "~primeng/resources/primeng.css";
+@import url('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/5.1.1/bootstrap-social.min.css');
+
+
+@import url('https://fonts.googleapis.com/css?family=Audiowide');
+@import url('https://fonts.googleapis.com/css?family=Exo+2:400,900');
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700');

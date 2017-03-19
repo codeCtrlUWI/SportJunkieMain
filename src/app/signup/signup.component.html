@@ -1,0 +1,87 @@
+<div class="container-fluid">
+
+</div>
+
+
+
+
+
+<div class="forCard" id="everything">
+    <div class="row justify-content-md-center" >
+        <div class="md-col-4" ></div>
+
+        <div class="md-col-4">
+            <md-card class="MainCard">
+                <md-card-content>
+                    <md-card-xl-image>
+                        <img class="JunkieImage" [src]="pathToImg" style="width: 500px;margin-left: 14px;padding-bottom: 40px" alt="">
+                    </md-card-xl-image>
+
+                    <form style="margin-left: 20%;margin-top: 5%;opacity: 10" #signInForm2='ngForm' (ngSubmit)="signIn(signInForm2, $event)" xmlns="http://www.w3.org/1999/html">
+                        <input style="width:70%;padding-bottom: 7px" type="email" pInputText name="email" id="emailForSignin" (ngModel)="email" placeholder="Enter Email..." required/><br><br>
+                        <input style="width: 70%;padding-bottom: 7px" type="password" pInputText name="password" id="passwordForSignin" (ngModel)="password" placeholder="Enter Password..." required/><br><br>
+                        <button class="signinbutton" md-raised-button type="submit" style="margin-left: 26%; width: 30px!important;color: white; margin-top:5%;font-size: 16px;font-family:'Audiowide',cursive " [disabled]="!signInForm2.valid" >Sign In</button>
+                    </form>
+                    <hr class="horizontal1">
+
+                    <div class="btn btn-block btn-social btn-google" style="width: 40%;margin-top: 8%;margin-left: 30%" (click)="googleSignup($event)">
+                        <span class="fa fa-google"></span>
+                        <h6 style="margin-left: 5px">Sign in with Google</h6>
+                    </div>
+                    <br>
+                    <hr class="horizontal1">
+                    <button type="button" class="btn btn-primary" style="width: 40%;text-align: center;margin-left: 30%;margin-top: 3%" data-toggle="modal" data-target="#signup">
+                        <h6> Sign up using Email</h6>
+                    </button><br>
+                </md-card-content>
+            </md-card>
+        </div>
+
+        <div class="md-col-4" >
+        </div>
+
+    </div>
+</div>
+
+
+
+<div style="z-index: 10000;position: absolute" id="message"><p-growl  [value]="msgs"></p-growl></div>
+
+
+<div class="modal fade" id="signup" tabindex="-1" role="dialog" aria-labelledby="signup" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="margin: auto; font-family: 'Audiowide',bold">SportJunkie™ Signup Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form #formData='ngForm' (ngSubmit)="onSubmit(formData, $event)" xmlns="http://www.w3.org/1999/html">
+                    <label for="email" style="display: block; font-family: 'Audiowide',bold">Enter Email*:</label>
+                    <input type="email" style="width: 200px" pInputText name="email" id="email" (ngModel)="email" required/><br><br>
+                    <label for="password" style="display: block; font-family: 'Audiowide',bold">Enter Password*:</label>
+                    <input type="password" style="width: 200px" pPassword name="password" id="password" (ngModel)="password" required/><br><br>
+                    <label for="Fname" style="display: block;; font-family: 'Audiowide',bold">Enter First Name*:</label>
+                    <input type="text" style="width: 200px" pInputText name="Fname" id="Fname" (ngModel)="Fname" required/><br><br>
+                    <label for="Lname" style="display: block;; font-family: 'Audiowide',bold">Enter Last Name*:</label>
+                    <input type="text" style="width: 200px" pInputText name="Lname" id="Lname" (ngModel)="Lname" required/><br><br>
+                    <label for="fileInputButton" style="display: block; font-family: 'Audiowide',bold">Upload Profile Picture (Optional):</label>
+                    <label class="btn btn-default btn-primary" for="fileInput" id="fileInputButton" style="width: 30%">Browse
+                        <input type="file" style="width: 100px" accept=".jpg,.png,.gif" (change)="getFile($event)" class="form-control" id="fileInput"  placeholder="Search for..." hidden required>
+                    </label>
+                    <p>{{filename}}</p>
+                    <button type="submit" style="float: right"  (click)="onSubmit(formData,$event)" class="btn btn-warning" [disabled]="!formData.valid">Submit</button>
+                    <button type="button" style="float: right;margin-right: 10px" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<router-outlet></router-outlet>
