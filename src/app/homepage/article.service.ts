@@ -6,11 +6,11 @@ export class ArticleService {
   article: FirebaseObjectObservable<any>;
   constructor(private af: AngularFire) { }
 
-  getArticle(aritcleID): Promise<FirebaseObjectObservable<any>>{
+  getArticle(aritcleId): Promise<FirebaseObjectObservable<any>>{
 
-    this.af.database.object('/ARTICLES/'+aritcleID).subscribe(article => {
+    this.af.database.object('/ARTICLES/'+aritcleId).subscribe(article => {
       this.article=article;
-
+      localStorage.setItem('currentArticle', JSON.stringify({anArticle: article}));
       });
 
     return Promise.resolve(this.article);

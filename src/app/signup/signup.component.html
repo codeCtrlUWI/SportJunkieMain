@@ -59,10 +59,26 @@
             </div>
             <div class="modal-body">
                 <form #formData='ngForm' (ngSubmit)="onSubmit(formData, $event)" xmlns="http://www.w3.org/1999/html">
-                    <label for="email" style="display: block; font-family: 'Audiowide',bold">Enter Email*:</label>
-                    <input type="email" style="width: 200px" pInputText name="email" id="email" (ngModel)="email" required/><br><br>
+                    <p style="font-family: 'Open Sans',cursive;font-size: 15px">All fields marked by "<span style="color: red"> * </span> " are mandatory to create an account. </p>
+                    <label for="email" style="display: block; font-family: 'Audiowide',bold" >Enter Email*:</label>
+                    <input type="email" style="width: 200px" pInputText name="email" id="email" (ngModel)="email" #email="ngModel" required email/>
+                    <span style="margin-left: 10px" *ngIf="email.errors?.email"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i> Not in proper email format. </span>
+                    <span style="margin-left: 10px" *ngIf="!email.errors?.email &&email.dirty"><i style="color: green" class="fa fa-check-circle" aria-hidden="true"></i> </span>
+                    <br><br>
+
                     <label for="password" style="display: block; font-family: 'Audiowide',bold">Enter Password*:</label>
-                    <input type="password" style="width: 200px" pPassword name="password" id="password" (ngModel)="password" required/><br><br>
+                    <input type="password" style="width: 200px" pPassword name="password" id="password" (ngModel)="password" #password="ngModel"  [rangeLength]="[6, 20]" minlength="6" required/>
+                    <span style="margin-left: 10px" *ngIf="password.errors?.rangeLength"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>Must be between 6 and 20 characters. </span>
+                    <span style="margin-left: 10px" *ngIf="!password.errors?.rangeLength && password.dirty && password.value.length>0"><i style="color: green" class="fa fa-check-circle" aria-hidden="true"></i> </span>
+                    <br><br>
+
+                    <label for="password" style="display: block; font-family: 'Audiowide',bold">Re-enter Password*:</label>
+                    <input type="password" style="width: 200px" pPassword name="passwordCheck" id="passwordCheck" (ngModel)="passwordCheck" #passwordCheck="ngModel"  [equalTo]="password" required/>
+                    <span style="margin-left: 10px" *ngIf="passwordCheck.errors?.equalTo && !passwordCheck.pristine"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>   Passwords do not match. </span>
+                    <span style="margin-left: 10px" *ngIf="!passwordCheck.errors?.equalTo && passwordCheck.dirty && password.value.length>0"><i style="color: green" class="fa fa-check-circle" aria-hidden="true"></i> Password Match. </span>
+                    <br><br>
+
+
                     <label for="Fname" style="display: block;; font-family: 'Audiowide',bold">Enter First Name*:</label>
                     <input type="text" style="width: 200px" pInputText name="Fname" id="Fname" (ngModel)="Fname" required/><br><br>
                     <label for="Lname" style="display: block;; font-family: 'Audiowide',bold">Enter Last Name*:</label>
@@ -72,8 +88,11 @@
                         <input type="file" style="width: 100px" accept=".jpg,.png,.gif" (change)="getFile($event)" class="form-control" id="fileInput"  placeholder="Search for..." hidden required>
                     </label>
                     <p>{{filename}}</p>
-                    <button type="submit" style="float: right"  (click)="onSubmit(formData,$event)" class="btn btn-warning" [disabled]="!formData.valid">Submit</button>
-                    <button type="button" style="float: right;margin-right: 10px" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <div *ngIf="file&&progress!=100" style="margin-top: 20px;margin-bottom: 20px" class="progress">
+                        <p style="width: 100%;color: black"><ngb-progressbar type="danger" [animated]="true" [value]="progress" [striped]="true">{{progress}}</ngb-progressbar></p>
+                    </div>
+                    <button type="submit" style="float: right"  (click)="clicked();onSubmit(formData,$event)" class="btn btn-warning"  [disabled]="!formData.valid">Submit</button>
+                    <button id="closeButton" type="button" style="float: right;margin-right: 10px" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </form>
             </div>
         </div>

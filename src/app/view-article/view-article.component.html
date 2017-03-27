@@ -1,16 +1,36 @@
-<div class="ui-overlaypanel-content" style="margin-top: 120px;">
-  <button md-fab style="text-align: center;"  (click)="goBack()">
-    <md-icon ></md-icon> <-
-  </button>
-  <h1 *ngIf="article">{{article.title }}</h1>
-  <h3 *ngIf="article">{{article.subtitle }}</h3>
-  <a>Author: </a>
-  <a *ngIf="article">{{article.authorFname}} </a>
-  <a *ngIf="article">{{article.authorLname }}</a>
-  <br>
-  <a *ngIf="article">{{article.category }}</a>
-  <br>
-  <a *ngIf="article">{{article.articleData }}</a>
+<div class="container-fluid">
+    <div class="row">
+    <div class="col-md-3">
 
+    </div>
+    <div style="margin-top: 100px;margin-bottom: 100px" class="col-md-7" id="panel">
+    <p-panel id="actualPanel">
+        <p-header style="color: #00acc1;font-family:'Open Sans',sans-serif">
+           <p style="float: left;clear: both;font-weight: 800;font-size: 24px"> {{article.title}}</p>
+            <p style="float: right">{{article.category}}</p>
+        </p-header>
+     <h1 *ngIf="article"></h1>
+    <a>Author:  </a>
+    <a *ngIf="article">{{article.authorFname}} </a>
+    <a *ngIf="article">{{article.authorLname }}</a>
+    <br> <br>
+        <a>Date Created:</a>
+        <a *ngIf="article">{{article.timeAndDateCreated}}</a>
+    <br> <br>
+        <a>Last Updated:</a>
+        <a *ngIf="article">{{article.lastUpdated}}</a>
+        <br><br>
+        <div class="container-fluid">
+            <img *ngIf="article" style="height: 100%; width: 100%;max-width: 800px; object-fit: contain;max-height: 400px" src="{{article.urlToImage}}">
+        </div>
+ <br><br>
+    <p style="font-family: 'Open Sans'" *ngIf="article">{{article.articleData }}</p>
+    </p-panel>
+    </div>
+    <div class="col-md-2">
 
+    </div>
+
+    </div>
 </div>
+

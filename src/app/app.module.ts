@@ -11,14 +11,14 @@ import 'hammerjs';
 import {MaterialModule} from "@angular/material";
 import {ButtonModule, InputTextModule} from "primeng/primeng";
 import {AuthGuardService} from "./AuthGuard/auth-guard.service";
-import {HomepageModule} from "./homepage/homepage.module";
-import {HomepageRoutingModule} from "./homepage/homepage-routing-module";
 import { NgSemanticModule } from 'ng-semantic/ng-semantic';
 import {SidebarModule} from "ng-sidebar/";
 import {NgbModule, NgbDropdownModule} from '@ng-bootstrap/ng-bootstrap';
-import { ViewArticleComponent } from './view-article/view-article.component';
-
-
+import {NavbarRoutingModule} from "./navbar/navbar-routing-module";
+import {NavbarModule} from "./navbar/navbar.module";
+import { EmptyComponent } from './empty/empty.component';
+import { ViewProfileComponent } from './view-profile/view-profile.component';
+import {TabViewModule} from 'primeng/primeng';
 
 
 
@@ -44,7 +44,7 @@ export const GoogleAuthConfig={
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -55,15 +55,14 @@ export const GoogleAuthConfig={
     MaterialModule.forRoot(),
     ButtonModule,
     InputTextModule,
-    AppRoutingModule,
-      SignupRoutingModule,
-      SignupModule,
-      HomepageRoutingModule,
-      HomepageModule,
       NgSemanticModule,
       SidebarModule,
       ReactiveFormsModule,
       NgbModule.forRoot(),
+    AppRoutingModule,
+    SignupRoutingModule,
+    SignupModule,
+      TabViewModule
 
 
 

@@ -1,0 +1,125 @@
+
+<div style="color: indianred;position: absolute;margin-left: 50%;margin-top: 22%" class="la-ball-clip-rotate-multiple la-3x">
+  <div></div>
+  <div></div>
+  <p>Please Wait...</p>
+</div>
+
+<div style="background-color: darkgrey;height: 100%;width: 100%;position: fixed;z-index: 1" class="container-fluid">
+
+
+  <div class="row" style="margin-bottom: 70px">
+    <nav class="navbar navbar-toggleable-xl navbar-inverse bg-inverse fixed-top" >
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
+      <div class="collapse navbar-collapse d-flex justify-content-start"  id="navbarNavDropdown">
+        <ul class="navbar-nav" style="margin-left: 40px;font-size: 16px;font-weight: bold;font-family: 'Open Sans', sans-serif;">
+          <li class="nav-item p-2">
+            <a  class="nav-link hvr-pop" href="/home">Home</a>
+          </li>
+          <li class="nav-item p-2">
+            <a class="nav-link hvr-pop" href="/cricket">Cricket</a>
+          </li>
+          <li class="nav-item p-2">
+            <a class="nav-link hvr-pop" href="/football">Football</a>
+          </li>
+          <li class="nav-item p-2">
+            <a class="nav-link hvr-pop" href="/swimming">Swimming</a>
+          </li>
+        </ul>
+      </div>
+      <p style="color: white;width: 1000px;margin-right: 30%;margin-top: 10px" class="d-flex justify-content-end">Currently logged in as: {{firstName}} {{lastName}}</p>
+      <div style="margin-right: 40px" class="d-flex justify-content-start">
+        <button class="viewProfileButton"  (click)="viewProfile()" md-raised-button style="font-family: 'Audiowide',bold"> Profile</button>
+      </div>
+      <div class="d-flex justify-content-start">
+        <button class="logoutButton" (click)="logout()" md-raised-button style="font-family: 'Audiowide',bold"> Logout</button>
+      </div>
+    </nav>
+  </div>
+
+
+
+
+  <div class="row" id="particleRow" style="width: 100%;height: 92%;background-color: darkgrey;position: absolute;z-index: 100">
+    <div style="margin-left: 35%;top:0;z-index: 100;position: absolute" class="col-md-4">
+    <md-card id="profileCard">
+      <md-card-content>
+        <button *ngIf="provider!='google.com'" class="editProfileButton" md-raised-button style="font-size: 15px;text-align: right;background-color: #1F1C18;float: right;display: block" data-toggle="modal" data-target="#editProfile">Edit Profile</button>
+        <button class="editProfileButton" md-raised-button style="font-size: 15px;text-align: right;background-color: #1F1C18;float: left;display: block" (click)="deleteAccount()" >Delete Account</button>
+        <img style="margin-left: 33.4%;display: block" class="profilepic" src="{{profilePic}}">
+        <p style="font-family: 'Open Sans';font-size: 30px;display: block;text-align: center;margin-left: 3px;margin-top: 30px">{{firstName}} {{lastName}}</p>
+        <p style="font-family: 'Open Sans';font-size: 15px;display: block;text-align: center;margin-left: 3px;margin-top: 15px">{{userEmail}}</p>
+      </md-card-content>
+    </md-card>
+    </div>
+  </div>
+  </div>
+
+<div style=" z-index: 10000 !important;" class="modal bd-example-modal-lg fade" id="editProfile" tabindex="-1" role="dialog" aria-labelledby="editProfile" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle" style="margin: auto; font-family: 'Audiowide',bold">Edit Profile</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <p-accordion>
+          <p-accordionTab header="Update Email:">
+            <label for="email" style="display: block; font-family: 'Audiowide',bold" >Enter New Email*:</label>
+            <input type="email" style="width: 300px" pInputText name="email" id="email" [(ngModel)]="userEmail" #email="ngModel" required email/>
+            <span style="margin-left: 10px" *ngIf="email.errors?.email"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i> Not in proper email format. </span>
+            <span style="margin-left: 10px" *ngIf="!email.errors?.email &&email.dirty &&email.value.length>0"><i style="color: green" class="fa fa-check-circle" aria-hidden="true"></i> </span>
+            <button type="submit"  (click)="updateEmail(email.toString())" class="btn btn-warning" id="updateEmail" [disabled]="!email.valid">Submit</button>
+          </p-accordionTab>
+          <p-accordionTab header="Update Password:">
+            <label for="password" style="display: block; font-family: 'Audiowide',bold">Enter Password*:</label>
+            <input type="password" style="width: 300px" pPassword name="password" id="password" [(ngModel)]="Password" #password="ngModel"  [rangeLength]="[6, 20]" minlength="6" required/>
+            <span style="margin-left: 10px" *ngIf="password.errors?.rangeLength"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>Only between 6-20 characters allowed </span>
+            <span style="margin-left: 10px" *ngIf="!password.errors?.rangeLength && password.dirty && password.value.length>0"><i style="color: green" class="fa fa-check-circle" aria-hidden="true"></i> </span>
+            <br><br>
+
+            <label for="password" style="display: block; font-family: 'Audiowide',bold">Re-enter Password*:</label>
+            <input type="password" style="width: 300px" pPassword name="passwordCheck" id="passwordCheck" (ngModel)="passwordCheck" #passwordCheck="ngModel"  [equalTo]="password" required/>
+            <span style="margin-left: 10px" *ngIf="passwordCheck.errors?.equalTo && !passwordCheck.pristine"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>   Passwords do not match. </span>
+            <span style="margin-left: 10px" *ngIf="!passwordCheck.errors?.equalTo && passwordCheck.dirty && password.value.length>0"><i style="color: green" class="fa fa-check-circle" aria-hidden="true"></i> Password Match. </span>
+            <br><br>
+            <button type="submit"  (click)="updatePassword()" class="btn btn-warning" id="updatePassword" [disabled]="!password.valid || !passwordCheck.valid">Submit</button>
+          </p-accordionTab>
+          <p-accordionTab header="Update First Name:">
+            <label for="Fname" style="display: block; font-family: 'Audiowide',bold">Enter First Name*:</label>
+            <input type="text" style="width: 200px" pInputText name="Fname" id="Fname" [(ngModel)]="firstName" #Fname="ngModel" pattern="[a-zA-Z]*" required/>
+            <span *ngIf="Fname.errors?.pattern"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>Please Enter Text Only.</span>
+            <br><br>
+            <button type="submit"  (click)="updateFirstName(Fname)" class="btn btn-warning" id="updatefirstName" [disabled]="!Fname.valid">Submit</button>
+          </p-accordionTab>
+          <p-accordionTab header="Update Last Name:">
+            <label for="Lname" style="display: block;; font-family: 'Audiowide',bold">Enter New Last Name*:</label>
+            <input type="text" style="width: 200px" pInputText name="Lname" id="Lname" [(ngModel)]="lastName" #Lname="ngModel" pattern="[a-zA-Z]*" required/>
+            <span *ngIf="Lname.errors?.pattern"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>Please Enter Text Only.</span>
+            <br><br>
+            <button type="submit"  (click)="updateLastName(Lname)" class="btn btn-warning" id="updatelastName" [disabled]="!Lname.valid">Submit</button>
+          </p-accordionTab>
+          <p-accordionTab header="Update Profile Picture:">
+            <label class="btn btn-default btn-primary" for="fileInput" id="fileInputButton" style="width: 30%">Browse
+              <input type="file" style="width: 100px" accept=".jpg,.png,.gif" (change)="getFile($event)" class="form-control" id="fileInput"  placeholder="Search for..." hidden required>
+            </label>
+            <p>{{filename}}</p>
+            <img *ngIf="filename!=null" id="blah" src="#" alt="your image" />
+            <button type="submit"  (click)="updateProfilePicture()" class="btn btn-warning" id="updateProfilePicture" [disabled]="!file">Submit</button>
+          </p-accordionTab>
+        </p-accordion>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<router-outlet></router-outlet>

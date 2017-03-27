@@ -9,6 +9,7 @@
     transform: translate(0, 0);
 }
 
+
 .modal-backdrop.in {
     opacity: 0.8 !important;
 }
@@ -17,9 +18,6 @@
     z-index: 10000 !important;
 }
 
-#message{
-    z-index:9999999999 !important;
-}
 
 .modal-backdrop {
     opacity: 0.8 !important;

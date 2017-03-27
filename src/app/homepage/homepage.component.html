@@ -1,70 +1,94 @@
-<div style="background-color: lightgray;height: 100%;width: 100%" class="container-fluid">
+
+<div style="color: indianred;position: fixed;margin-left: 50%;margin-top: 22%" class="la-ball-clip-rotate-multiple la-3x">
+    <div></div>
+    <div></div>
+    <p>Please Wait...</p>
+</div>
+
+<div style="background-color: darkgrey;height: 100%;width: 100%" class="container-fluid">
+
 
     <div class="row" style="margin-bottom: 100px">
-<nav class="navbar navbar-toggleable-xl navbar-inverse bg-inverse fixed-top" >
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" href="/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
-    <div class="collapse navbar-collapse d-flex justify-content-start"  id="navbarNavDropdown">
-        <ul class="navbar-nav" style="margin-left: 40px;font-size: 16px;font-weight: bold;font-family: 'Open Sans', sans-serif;">
-            <li class="nav-item active p-2 ">
-                <a class="nav-link hvr-pop" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item p-2">
-                <a class="nav-link hvr-pop" href="#">Trending</a>
-            </li>
-            <li class="nav-item p-2">
-                <a  class="nav-link hvr-pop" href="#">Featured</a>
-            </li>
-            <ul class="nav-item dropdown p-2">
-                <a style="padding-bottom: 5px;position: absolute;display: inline-flex" class="nav-link hvr-icon-sink-away" id="category" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Categories <i style="color: transparent; display: inline-flex;margin-left: 10px;margin-top: 1px" class="fa fa-arrow-circle-o-down" aria-hidden="true"></i> <p style="color: transparent">z</p> <p></p>
-                </a>
+        <nav class="navbar navbar-toggleable-xl navbar-inverse bg-inverse fixed-top" >
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
+            <div class="collapse navbar-collapse d-flex justify-content-start"  id="navbarNavDropdown">
+                <ul class="navbar-nav" style="margin-left: 40px;font-size: 16px;font-weight: bold;font-family: 'Open Sans', sans-serif;">
+                    <li class="nav-item active p-2">
+                        <a  class="nav-link hvr-pop" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item p-2">
+                        <a class="nav-link hvr-pop" href="/cricket">Cricket</a>
+                    </li>
+                    <li class="nav-item p-2">
+                        <a class="nav-link hvr-pop" href="/football">Football</a>
+                    </li>
+                    <li class="nav-item p-2">
+                        <a class="nav-link hvr-pop" href="/swimming">Swimming</a>
+                    </li>
+                </ul>
+            </div>
+            <p style="color: white;width: 700px;margin-right: 30%;margin-top: 10px" class="d-flex justify-content-start">Currently logged in as: {{firstName}} {{lastName}}</p>
+            <div style="margin-right: 40px" class="d-flex justify-content-start">
+                <button class="viewProfileButton"  (click)="viewProfile()" md-raised-button style="font-family: 'Audiowide',bold"> Profile</button>
+            </div>
+            <div class="d-flex justify-content-start">
+                <button class="logoutButton" (click)="logout()" md-raised-button style="font-family: 'Audiowide',bold"> Logout</button>
+            </div>
+        </nav>
+    </div>
+    <!--_toggleSidebar()-->
 
-                <div style="position: absolute;margin-top: 5px;font-size: 20px" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a  class="dropdown-item hvr-pop" href="#">Football</a>
-                    <a style="margin-top: 14px;" class="dropdown-item hvr-pop" href="#">Cricket</a>
-                    <a style="color:white;margin-top: 14px;padding-bottom: 12px" class="dropdown-item hvr-pop" href="#">Swimming</a>
+
+    <div style="background-color: darkgrey!important;" class="row">
+        <div class="col-md-4">
+
+        </div>
+        <div  style="font-family: 'Open Sans',sans-serif" class="col-md-5">
+            <div *ngFor="let article of articles">
+            <md-card (click)="viewArticle(article.articleID)"  class="example-card">
+                <div style="position: absolute;" class="Headings">
+                    <md-card-title id="titleOfCard">{{article.title}}</md-card-title>
+                    <hr style="background-color: white">
+                    <md-card-subtitle style="margin-left: 3px;color: white">{{article.category}}</md-card-subtitle>
                 </div>
-            </ul>
-        </ul>
-    </div>
-    <div class="d-flex justify-content-start">
-        <button class="logoutButton" (click)="logout()" md-raised-button style="font-family: 'Audiowide',bold"> Logout</button>
+                <md-card-content style="">
+                    <img style="height: 440px;display: inline-block;z-index: -1" md-card-image src="{{article.urlToImage}}">
+                    <p>
+                        {{article.subtitle}}
+                    </p>
+                </md-card-content>
+            </md-card>
+            </div>
         </div>
-</nav>
-    </div>
-<!--_toggleSidebar()-->
 
+        <div id="list" class="col-md-3">
+            <md-card style="position: fixed;width: 425px;opacity: 0.85;background-color: #971313" *ngFor="let starter of featuredArticles|slice:0:1">
+                <md-card-content>
+                    <div>
+                    <h2 style="font-family: 'Open Sans';text-align: left;margin-left: 20px;color: white" *ngIf="starter.articleID"> Featured </h2>
+                    <hr *ngIf="starter.articleID" style="width: 90%;margin-left: 20px;background-color: white">
+                    </div>
+                    <ol style="background-color: #971313; font-family: 'Open Sans',sans-serif ">
 
-<div style="background-color: lightgray!important;" class="row">
-    <div class="col-md-4">
+                        <li id="featuredItems" style="margin-top: 20px;cursor: pointer;width: 60%;color: white" *ngFor="let featured of featuredArticles|slice:0:10"  (click)="viewArticle(featured.articleID)">
+                            <div *ngIf="featured.articleID" ></div>
+                            <img style="display:inline-block;margin-left: 3%" class="img-circle" [src]="featured.urlToImage">
+                            <div style="display: inline-block;position: absolute;width: 59%;margin-top: 10px">
+                                <p style="display: inline-block;margin-left: 5%;word-wrap: break-word;text-align:left">{{featured.title}}</p>
+                            </div>
 
-    </div>
-    <div class="col-md-5">
-<md-card *ngFor="let article of articles|async" class="example-card">
-    <button (click)="viewArticle(article.articleID)">View</button>
-    <md-card-header style="margin-bottom: 40px;text-align: left">
-        <div style="margin-bottom: 30px" class="Headings">
-        <md-card-title style="font-weight:600;font-size: 26px;margin-bottom: 27px;word-wrap: break-word;line-height: 30px">{{article.title}}</md-card-title>
-        <md-card-subtitle style="margin-left: 3px;margin-bottom: 14px;z-index: 1000">{{article.category}}</md-card-subtitle>
+                        </li>
+                    </ol>
+                </md-card-content>
+            </md-card>
         </div>
-    </md-card-header>
-    <md-card-content style="margin-top: 4%!important;">
-        <img style="margin-top: 2%!important;height: 440px;display: inline-block;z-index: -1" md-card-image src="{{article.urlToImage}}">
-        <p>
-            {{article.subtitle}}
-        </p>
-    </md-card-content>
-</md-card>
+
     </div>
-    <div class="col-md-3">
-    </div>
+
 
 </div>
-    </div>
-
-
 
 <router-outlet></router-outlet>

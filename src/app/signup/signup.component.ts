@@ -1,9 +1,12 @@
-import {Component, Inject} from "@angular/core";
+import {Component, Inject, OnInit} from "@angular/core";
 import {AngularFire, FirebaseApp, FirebaseListObservable, FirebaseObjectObservable} from "angularfire2";
 import {Router} from "@angular/router";
 import * as firebase from 'firebase'
 import { UUID } from 'angular2-uuid';
 import {Message} from "primeng/primeng";
+import {MdSnackBar} from '@angular/material';
+import { ChangeDetectorRef } from '@angular/core';
+import {CredentialService} from "../view-profile/credential.service";
 
 declare var $:any;
 
@@ -17,7 +20,7 @@ declare var $:any;
 
 
 
-export class SignupComponent {
+export class SignupComponent implements OnInit{
 
     msgs: Message[] = [];
 
@@ -39,6 +42,7 @@ export class SignupComponent {
     password;
     profilepic;
     uid;
+    progress;
 
 
     imageLink;
@@ -47,19 +51,21 @@ export class SignupComponent {
     storageref;
     uuid;
     indicator;
+    tokenData;
+    googleUID;
 
     private  pathToImg;
 
-    constructor(private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any,) {
+    constructor(private credentials:CredentialService, private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any,public snackBar: MdSnackBar,private ref: ChangeDetectorRef) {
 
         this.msgs=[];
         this.afState = this.af;
         this.googleProvider = new firebase.auth.GoogleAuthProvider();
-        this.emailAndPass = new firebase.auth.EmailAuthProvider();
         this.googleProvider.addScope('profile');
         this.googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
         this.firebaseApp = firebaseApp;
         this.indicator=false;
+        this.emailAndPass = new firebase.auth.EmailAuthProvider();
 
         this.uuid = UUID.UUID();
 
@@ -68,11 +74,10 @@ export class SignupComponent {
 
         let user= firebaseApp.auth().currentUser;
 
-        if(user){
-            this.router.navigate(['/home']);
-        }else{
+    }
 
-        }
+    ngOnInit(){
+        this.ref.markForCheck();
     }
 
 
@@ -81,27 +86,31 @@ export class SignupComponent {
         var that = this;
         this.firebaseApp.auth().signInWithPopup(this.googleProvider)
             .then(function (result) {
-                var token = result.credential.accessToken;
-                console.log(token);
-                $.getJSON('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token, function (data) {
-                    that.firstName = data.given_name;
-                    that.lastName = data.family_name;
-                    that.email = data.email;
-                    that.profilepic = data.picture;
-                    that.afState.auth.subscribe(authData=>
-                        that.uid = authData.uid,
-                    );
-                    console.log(that.firstName);
-                    console.log(that.lastName);
-                    console.log(that.email);
-                    console.log(that.profilepic);
-                    console.log(that.uid);
-                    setUser();
-                })})
+                    var token = result.credential.accessToken;
+                    that.credentials.storeOAuthToken(token);
+                    console.log(token);
+                console.log(result);
+                event.preventDefault();
+                    $.getJSON('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token, function (data) {
+                        that.tokenData = data;
+                        that.firstName = data.given_name;
+                        that.lastName = data.family_name;
+                        that.email = data.email;
+                        that.profilepic = data.picture;
+                        that.afState.auth.subscribe(authData=>
+                            that.uid = authData.uid,
+                        );
+                        that.googleUID= data.id;
+                        console.log(that.firstName);
+                        console.log(that.lastName);
+                        console.log(that.email);
+                        console.log(that.profilepic);
+                        console.log(that.uid);
+                        setUser();
+                    })
+                })
 
-            .then(function () {
-                that.router.navigate(['/home']);
-                window.location.reload();
+            .then((result)=> {
             })
             .catch(function (error) {
                 console.log(error);
@@ -118,7 +127,11 @@ export class SignupComponent {
                     author:false
 
                 }
-            )
+            ).then(result=>navigate());
+        }
+        function navigate(){
+            that.router.navigate(['/home']);
+            location.reload();
         }
 
         }
@@ -176,6 +189,7 @@ export class SignupComponent {
                 // Observe state change events such as progress, pause, and resume
                 // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
                 var progress = Math.floor((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                that.progress=progress;
                 console.log('Upload is ' + progress + '% done');
                 switch (snapshot.state) {
                     case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -213,19 +227,17 @@ export class SignupComponent {
             );
             that.msgs = [];
             that.msgs.push({severity:'success', summary:'Account Created', detail:'You can now Sign In!'});
-            $('#signup').modal('toggle');
-            $('#signup').modal('hide');
-            $('.modal-backdrop').remove();
-            $('.modal-backdrop').remove();
+            $('#closeButton').click();
         }
     }
 
         signIn(signInForm, event)
         {
             var that= this;
-            event.preventDefault();
             this.email= signInForm.value.email;
             this.password= signInForm.value.password;
+            this.credentials.storeEmail(this.email);
+            this.credentials.storePassword(this.password);
             console.log(this.email);
             console.log(this.password);
             this.firebaseApp.auth().signInWithEmailAndPassword(this.email,this.password)
@@ -234,9 +246,10 @@ export class SignupComponent {
                 console.log(this.uid);
                     $('.modal-backdrop').remove();
                 })
-                .then(success=>
-                    this.router.navigate(['/home'])
-                )
+                .then((success)=>{
+                    this.router.navigate(['/home']);
+                    location.reload();
+                })
                 .catch(function (error) {
                     var errorCode= error.code;
                     console.log(errorCode);
@@ -254,6 +267,11 @@ export class SignupComponent {
                     }
                 })
 
+        }
+
+        clicked(){
+            this.msgs = [];
+            this.msgs.push({severity:'warn', summary:'Creating Account...', detail:'Please Wait.'});
         }
 
 
