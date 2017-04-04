@@ -3,7 +3,7 @@ import {
     ChangeDetectorRef, ApplicationRef, Input, NgZone
 } from '@angular/core';
 import {FirebaseApp, AngularFire, FirebaseObjectObservable, FirebaseListObservable} from "angularfire2";
-import {Router} from "@angular/router";
+import {Router, NavigationEnd, NavigationStart} from "@angular/router";
 import {ArticleService} from "./article.service";
 import "rxjs/add/operator/map";
 declare var $: any;
@@ -36,9 +36,12 @@ export class HomepageComponent implements OnInit{
     lastName;
     pushArray:any[];
 
+
     user: FirebaseObjectObservable<any>;
 
   constructor(private as:ArticleService, private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any,private zone: NgZone) {
+
+
 
       this.firebaseApp = firebaseApp;
 
@@ -61,6 +64,9 @@ export class HomepageComponent implements OnInit{
   }
 
   ngOnInit(){
+
+
+
       var that = this;
       this.af.auth.subscribe(authData=>this.uid = authData.uid);
       console.log(this.uid);
@@ -106,17 +112,36 @@ export class HomepageComponent implements OnInit{
     viewArticle(articleId){
         this.as.getArticle(articleId);
         this.router.navigate(['home/view/',articleId]);
+
     }
 
     viewProfile(){
         this.router.navigate(['/profile']);
     }
 
+    increaseClicks(articleID,numberOfClicks,category){
+        var databaseRef= firebase.database().ref('/ARTICLES').child(articleID).child('numberOfClicks');
+
+        databaseRef.transaction(function(clicks) {
+
+            return (clicks || 0) + 1;
+
+        });
+
+        var userRef= firebase.database().ref('/USERS').child(this.uid).child('categoriesClicked').child(category);
+
+        userRef.transaction(function (clicks) {
+            return (clicks||0)+1;
+        })
+
+
+    }
+
 
   logout() {
     this.af.auth.logout().then(
         (success) => {
-          this.router.navigate(['/signup']);
+          this.router.navigate(['/signin']);
           this.af.auth.unsubscribe();
           window.location.reload();
         })

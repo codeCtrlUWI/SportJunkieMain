@@ -14,10 +14,6 @@ import {ViewArticleComponent} from "../view-article/view-article.component";
 import {NavbarComponent} from "./navbar.component";
 import {NavbarRoutingModule} from "./navbar-routing-module";
 import {PanelModule} from 'primeng/primeng';
-import {CricketComponent} from "../cricket/cricket.component";
-import {FootballComponent} from "../football/football.component";
-import {SwimmingComponent} from "../swimming/swimming.component";
-import {EmptyComponent} from "../empty/empty.component";
 import {CredentialService} from "../view-profile/credential.service";
 
 
@@ -38,6 +34,6 @@ import {CredentialService} from "../view-profile/credential.service";
       PanelModule,
   ],
   providers:[ArticleService, AuthGuardService,CredentialService],
-  declarations: [ViewArticleComponent,NavbarComponent, HomepageComponent, CricketComponent,FootballComponent,SwimmingComponent,EmptyComponent],
+  declarations: [],
 })
 export class NavbarModule { }

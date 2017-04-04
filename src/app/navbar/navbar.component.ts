@@ -22,7 +22,7 @@ export class NavbarComponent{
 logout() {
   this.af.auth.logout().then(
       (success) => {
-        this.router.navigate(['/signup']);
+        this.router.navigate(['/signin']);
         this.af.auth.unsubscribe();
         window.location.reload();
       })

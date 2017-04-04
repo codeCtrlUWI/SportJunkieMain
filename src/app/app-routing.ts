@@ -4,8 +4,8 @@ import {  Routes ,RouterModule} from '@angular/router';
 import {SignupComponent} from "./signup/signup.component";
 
 const appRoutes: Routes =[
-    {path: '', redirectTo: '/signup', pathMatch: 'full' },
-  {path: 'signup', component:SignupComponent },
+    {path: '', redirectTo: '/signin', pathMatch: 'full' },
+  {path: 'signin', component:SignupComponent },
 
 ];
 

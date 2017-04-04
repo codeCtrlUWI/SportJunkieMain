@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import {ArticleService} from "../homepage/article.service";
 import "rxjs/add/operator/map";
 declare var $: any;
+import * as firebase from 'firebase'
 
 @Component({
   moduleId: module.id,
@@ -19,63 +20,126 @@ export class CricketComponent implements OnInit{
 
 
 
+
   firebaseApp;
   _opened;
-  featuredArticles: FirebaseListObservable<any>;
-  articles: FirebaseListObservable<any>;
-  article: FirebaseObjectObservable<any>;
-  componentCompleted;
+  featuredArticles: any[];
+  articles:any[];
+  multipleArticles: FirebaseListObservable<any>;
+  uid;
+  show=0;
+  firstName;
+  lastName;
+  pushArray:any[];
+
+  user: FirebaseObjectObservable<any>;
 
   constructor(private as:ArticleService, private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any) {
 
-    this.firebaseApp= firebaseApp;
-    this._opened= false;
 
-    this.articles=this.af.database.list('/ARTICLES',{
-      query:{
-        limitToLast:10000000
-      }
-    }).map((array)=>array.reverse())as FirebaseListObservable<any[]>;
+    this.firebaseApp = firebaseApp;
 
 
-    this.articles.subscribe(
-        val => console.log(val)
-    );
+    var articlesref= firebase.database().ref('/ARTICLES');
 
-
-    this.featuredArticles=this.af.database.list('/ARTICLES',{
-      query:{
-        orderByChild:'numberOfClicks'
-      }
-    }).map((array)=>array.reverse())as FirebaseListObservable<any[]>;
-
-    this.featuredArticles.subscribe(
-        val => console.log(val)
-    );
-
-
-
+    articlesref.on('value', (snap) => {
+      // snap.val() comes back as an object with keys
+      // these keys need to be come "private" properties
+      let data = snap.val();
+      let dataWithKeys = Object.keys(data).map((key) => {
+        var obj = data[key];
+        obj._key = key;
+        return obj;
+      });
+      this.articles=dataWithKeys; // This is a synchronized array
+      console.log(this.articles);
+      this.articles.reverse();
+    });
   }
 
   ngOnInit(){
-    this.componentCompleted=true;
-  }
+
+
+
+    var that = this;
+    this.af.auth.subscribe(authData=>this.uid = authData.uid);
+    console.log(this.uid);
+    this.show = 1;
+
+    this.user = this.af.database.object('/USERS/' + this.uid, {preserveSnapshot: true});
+    this.user.subscribe(snapshot => {
+      this.firstName = snapshot.val().firstName;
+      this.lastName = snapshot.val().lastName;
+    });
+
+
+    var rArray=[];
+
+    var farticlesref= firebase.database().ref('/ARTICLES');
+    farticlesref.orderByChild("numberOfClicks").on("value",function(data) {
+      rArray=[];
+      data.forEach(function(snapshot) {
+        let featuredData= snapshot.val();
+        rArray.push(featuredData);
+        return false;
+      });
+      console.log(rArray);
+      that.featuredArticles= rArray;
+      that.featuredArticles.reverse();
+      return false;
+    });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   viewArticle(articleId){
     this.as.getArticle(articleId);
-    this.router.navigate(['cricket/view/',articleId]);
+    this.router.navigate(['home/view/',articleId]);
+
+  }
+
+  viewProfile(){
+    this.router.navigate(['/profile']);
+  }
+
+  increaseClicks(articleID,numberOfClicks,category){
+    var databaseRef= firebase.database().ref('/ARTICLES').child(articleID).child('numberOfClicks');
+
+    databaseRef.transaction(function(clicks) {
+
+      return (clicks || 0) + 1;
+
+    });
+
+    var userRef= firebase.database().ref('/USERS').child(this.uid).child('categoriesClicked').child(category);
+
+    userRef.transaction(function (clicks) {
+      return (clicks||0)+1;
+    })
+
+
   }
 
 
   logout() {
     this.af.auth.logout().then(
         (success) => {
-          this.router.navigate(['/signup']);
+          this.router.navigate(['/signin']);
           this.af.auth.unsubscribe();
           window.location.reload();
         })
   }
-
 
 
 }

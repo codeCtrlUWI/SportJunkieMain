@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div style="position: fixed;overflow-x: hidden!important;" class="container-fluid">
 
 </div>
 
@@ -6,16 +6,14 @@
 
 
 
-<div class="forCard" id="everything">
-    <div class="row justify-content-md-center" >
-        <div class="md-col-4" ></div>
+<div style="width: 100%;height: 100%" class="forCard" id="everything">
+    <div class="row justify-content-center" >
+        <div class="col col-4 col-sm-4 col-md-4" ></div>
 
-        <div class="md-col-4">
+        <div class="col col-4 col-sm-4 col-md-4">
             <md-card class="MainCard">
                 <md-card-content>
-                    <md-card-xl-image>
-                        <img class="JunkieImage" [src]="pathToImg" style="width: 500px;margin-left: 14px;padding-bottom: 40px" alt="">
-                    </md-card-xl-image>
+                    <img class="JunkieImage" [src]="pathToImg" style=" display:flex;width: 100%!important;margin: auto" alt="">
 
                     <form style="margin-left: 20%;margin-top: 5%;opacity: 10" #signInForm2='ngForm' (ngSubmit)="signIn(signInForm2, $event)" xmlns="http://www.w3.org/1999/html">
                         <input style="width:70%;padding-bottom: 7px" type="email" pInputText name="email" id="emailForSignin" (ngModel)="email" placeholder="Enter Email..." required/><br><br>
@@ -24,9 +22,9 @@
                     </form>
                     <hr class="horizontal1">
 
-                    <div class="btn btn-block btn-social btn-google" style="width: 40%;margin-top: 8%;margin-left: 30%" (click)="googleSignup($event)">
+                    <div class="btn btn-block btn-social btn-google" style="width: 40%;margin: 0 auto" (click)="googleSignup($event)">
                         <span class="fa fa-google"></span>
-                        <h6 style="margin-left: 5px">Sign in with Google</h6>
+                        <h6 style="margin-left: 6%">Sign in with Google</h6>
                     </div>
                     <br>
                     <hr class="horizontal1">
@@ -37,7 +35,7 @@
             </md-card>
         </div>
 
-        <div class="md-col-4" >
+        <div class="col col-4 col-sm-4 col-md-4" >
         </div>
 
     </div>
@@ -80,14 +78,19 @@
 
 
                     <label for="Fname" style="display: block;; font-family: 'Audiowide',bold">Enter First Name*:</label>
-                    <input type="text" style="width: 200px" pInputText name="Fname" id="Fname" (ngModel)="Fname" required/><br><br>
+                    <input type="text" style="width: 200px" pInputText name="Fname" id="Fname" (ngModel)="firstName" #Fname="ngModel" pattern="[a-z A-Z]*" required/>
+                    <span *ngIf="Fname.errors?.pattern"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>Please Enter Text Only.</span>
+                    <br><br>
                     <label for="Lname" style="display: block;; font-family: 'Audiowide',bold">Enter Last Name*:</label>
-                    <input type="text" style="width: 200px" pInputText name="Lname" id="Lname" (ngModel)="Lname" required/><br><br>
+                    <input type="text" style="width: 200px" pInputText name="Lname" id="Lname" (ngModel)="lastName" #Lname="ngModel" pattern="[a-z A-Z]*" required/>
+                    <span *ngIf="Lname.errors?.pattern"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>Please Enter Text Only.</span>
+                    <br><br>
                     <label for="fileInputButton" style="display: block; font-family: 'Audiowide',bold">Upload Profile Picture (Optional):</label>
                     <label class="btn btn-default btn-primary" for="fileInput" id="fileInputButton" style="width: 30%">Browse
                         <input type="file" style="width: 100px" accept=".jpg,.png,.gif" (change)="getFile($event)" class="form-control" id="fileInput"  placeholder="Search for..." hidden required>
                     </label>
                     <p>{{filename}}</p>
+                    <img *ngIf="filename!=null" id="blah" src="#" alt="your image" />
                     <div *ngIf="file&&progress!=100" style="margin-top: 20px;margin-bottom: 20px" class="progress">
                         <p style="width: 100%;color: black"><ngb-progressbar type="danger" [animated]="true" [value]="progress" [striped]="true">{{progress}}</ngb-progressbar></p>
                     </div>

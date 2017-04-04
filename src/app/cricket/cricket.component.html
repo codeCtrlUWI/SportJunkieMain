@@ -5,7 +5,7 @@
 
 
 
-<div style="background-color: lightgray;height: 100%;width: 100%" class="container-fluid">
+<div style="background-color: darkgray;height: 100%;width: 100%" class="container-fluid">
 
 
   <div class="row" style="margin-bottom: 100px">
@@ -16,10 +16,10 @@
       <a class="navbar-brand" href="/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
       <div class="collapse navbar-collapse d-flex justify-content-start"  id="navbarNavDropdown">
         <ul class="navbar-nav" style="margin-left: 40px;font-size: 16px;font-weight: bold;font-family: 'Open Sans', sans-serif;">
-          <li class="nav-item active p-2">
+          <li class="nav-item p-2">
             <a  class="nav-link hvr-pop" href="/home">Home</a>
           </li>
-          <li class="nav-item p-2">
+          <li class="nav-item active p-2">
             <a class="nav-link hvr-pop" href="/cricket">Cricket</a>
           </li>
           <li class="nav-item p-2">
@@ -30,6 +30,10 @@
           </li>
         </ul>
       </div>
+      <p style="color: white;margin-top: 10px;text-align: center;display: inline-flex;align-items: center;justify-content: center;width: 100%" class="d-flex justify-content-start">Currently logged in as: {{firstName}} {{lastName}}</p>
+      <div style="margin-right: 40px" class="d-flex justify-content-start">
+        <button class="viewProfileButton"  (click)="viewProfile()" md-raised-button style="font-family: 'Audiowide',bold"> Profile</button>
+      </div>
       <div class="d-flex justify-content-start">
         <button class="logoutButton" (click)="logout()" md-raised-button style="font-family: 'Audiowide',bold"> Logout</button>
       </div>
@@ -38,46 +42,51 @@
   <!--_toggleSidebar()-->
 
 
-  <div style="background-color: lightgray!important;" class="row">
-    <div class="col-md-4">
+
+  <div style="background-color: darkgrey!important;" class="row">
+    <div class="col col-4 col-sm-4 col-md-4">
 
     </div>
-    <div style="font-family: 'Open Sans',sans-serif" class="col-md-5">
-      <div *ngFor="let article of articles|async">
-        <div *ngIf="article.category=='Cricket'">
-      <md-card (click)="viewArticle(article.articleID)"  class="example-card">
-        <div style="position: absolute;" class="Headings">
-          <md-card-title id="titleOfCard">{{article.title}}</md-card-title>
-          <hr style="background-color: white">
-          <md-card-subtitle style="margin-left: 3px;color: white">{{article.category}}</md-card-subtitle>
-        </div>
-        <md-card-content style="">
-          <img style="height: 440px;display: inline-block;z-index: -1" md-card-image src="{{article.urlToImage}}">
-          <p>
-            {{article.subtitle}}
-          </p>
-        </md-card-content>
-      </md-card>
-    </div>
-        </div>
+    <div  style="font-family: 'Open Sans',sans-serif" class="col col-5 col-sm-5 col-md-5">
+      <div *ngFor="let starter of articles|slice:0:1">
+        <h4 *ngIf="starter.articleID" style="font-family: 'Open Sans',sans-serif;font-size: 26px;margin-bottom: 0!important;">Latest Articles </h4>
+        <hr *ngIf="starter.articleID"  style="width: 100%;background-color: black;margin-bottom: 25px">
       </div>
+      <div *ngFor="let article of articles">
+        <md-card *ngIf="article.category=='Cricket'" (click)="increaseClicks(article.articleID,article.numberOfClicks,article.category);viewArticle(article.articleID)"  class="example-card">
+          <div style="position: absolute;" class="Headings">
+            <md-card-title id="titleOfCard">{{article.title}}</md-card-title>
+            <hr style="background-color: white">
+            <md-card-subtitle style="margin-left: 3px;color: white">{{article.category}}</md-card-subtitle>
+          </div>
+          <md-card-content style="">
+            <img style="height: 440px;display: inline-block;z-index: -1" md-card-image src="{{article.urlToImage}}">
+            <p>
+              {{article.subtitle}}
+            </p>
+          </md-card-content>
+        </md-card>
+      </div>
+    </div>
 
-    <div id="list" class="col-md-3">
-      <md-card *ngIf="componentCompleted==true">
+    <div style="position: fixed;right: 0"  id="list" class="col col-3 col-sm-3 col-md-3">
+      <md-card id="featuredCard" style="position: relative;opacity: 0.85;background-color: #971313" *ngFor="let starter of featuredArticles|slice:0:1">
         <md-card-content>
-          <h2> Featured </h2>
-          <hr style="width: 100%;">
-          <ol style="background-color: white; font-family: 'Open Sans',sans-serif ">
-            <div *ngFor="let featured of featuredArticles|async|slice:0:10">
-            <li style="margin-top: 40px" *ngIf="featured.category=='Cricket'"  (click)="viewArticle(featured.articleID)">
-              <div *ngIf="featured.articleID" ></div>
-              <img style="display:inline-block;margin-left: 3%" class="img-circle" [src]="featured.urlToImage">
-              <div style="display: inline-block;position: absolute;width: 59%;margin-top: 10px">
-                <p style="display: inline-block;margin-left: 5%;word-wrap: break-word;text-align:left">{{featured.title}}</p>
-              </div>
-
-            </li>
-              </div>
+          <div>
+            <h2 style="font-family: 'Open Sans';text-align: left;margin-left: 20px;color: white" *ngIf="starter.articleID"> Featured </h2>
+            <hr *ngIf="starter.articleID" style="width: 90%;margin-left: 20px;background-color: white">
+          </div>
+          <ol style="background-color: #971313; font-family: 'Open Sans',sans-serif ">
+            <div *ngFor="let featured of featuredArticles|slice:0:10">
+              <li *ngIf="featured.category=='Cricket'" id="featuredItems" style="margin-top: 20px;cursor: pointer;width: 100%;color: white;line-height: 5px;text-overflow: ellipsis;"  (click)="increaseClicks(featured.articleID,featured.numberOfClicks);viewArticle(featured.articleID)">
+                <div *ngIf="featured.articleID" >
+                  <img style="display:inline-block;margin-left: 3%" class="img-circle" [src]="featured.urlToImage">
+                  <div style="display: inline-block;position: relative;width: 62%;margin-top: 13px;margin-bottom: 20px;vertical-align: middle">
+                    <p style="display: inline-block;margin-left: 5%;word-wrap: break-word;text-align:left">{{featured.title}}</p>
+                  </div>
+                </div>
+              </li>
+            </div>
           </ol>
         </md-card-content>
       </md-card>

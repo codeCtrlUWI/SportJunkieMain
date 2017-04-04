@@ -25,6 +25,10 @@ import {AccordionModule} from 'primeng/primeng';
 import {CredentialService} from "../view-profile/credential.service";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {NgPipesModule} from 'ngx-pipes';
+import {ConfirmDialogModule} from 'primeng/primeng';
+import {TooltipModule} from 'primeng/primeng';
+import { AmChartsModule } from "amcharts3-angular2";
+import { ChartsModule } from 'ng2-charts/ng2-charts';
 
 
 
@@ -46,7 +50,11 @@ import {NgPipesModule} from 'ngx-pipes';
       TabViewModule,
       AccordionModule,
       NgbModule,
-    NgPipesModule
+    NgPipesModule,
+      ConfirmDialogModule,
+      TooltipModule,
+      AmChartsModule,
+      ChartsModule
 
   ],
   providers:[ArticleService, AuthGuardService,CredentialService],

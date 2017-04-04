@@ -5,10 +5,10 @@
   <p>Please Wait...</p>
 </div>
 
-<div style="background-color: darkgrey;height: 100%;width: 100%;position: fixed;z-index: 1" class="container-fluid">
+<div style="background-color: darkgrey;height: 100%;width: 100%;position: fixed;overflow-y:auto;overflow-x:hidden;" class="container-fluid">
 
 
-  <div class="row" style="margin-bottom: 70px">
+  <div class="row" style="margin-bottom: 50px">
     <nav class="navbar navbar-toggleable-xl navbar-inverse bg-inverse fixed-top" >
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -30,11 +30,11 @@
           </li>
         </ul>
       </div>
-      <p style="color: white;width: 1000px;margin-right: 30%;margin-top: 10px" class="d-flex justify-content-end">Currently logged in as: {{firstName}} {{lastName}}</p>
+      <p style="color: white;margin-top: 10px;display: inline;margin-right:50px;align-items: center;justify-content: center;width: 100%" class="d-flex justify-content-start">Currently logged in as: {{firstName}} {{lastName}}</p>
       <div style="margin-right: 40px" class="d-flex justify-content-start">
-        <button class="viewProfileButton"  (click)="viewProfile()" md-raised-button style="font-family: 'Audiowide',bold"> Profile</button>
+        <button class="logoutButton"  (click)="viewProfile()" md-raised-button style="font-family: 'Audiowide',bold"> Profile</button>
       </div>
-      <div class="d-flex justify-content-start">
+      <div style="margin-right: 18px" class="d-flex justify-content-start">
         <button class="logoutButton" (click)="logout()" md-raised-button style="font-family: 'Audiowide',bold"> Logout</button>
       </div>
     </nav>
@@ -43,22 +43,67 @@
 
 
 
-  <div class="row" id="particleRow" style="width: 100%;height: 92%;background-color: darkgrey;position: absolute;z-index: 100">
-    <div style="margin-left: 35%;top:0;z-index: 100;position: absolute" class="col-md-4">
+  <div class="row d-flex justify-content-center" id="particleRow" style="width: 110%;height: 97%;background-color: darkgrey" >
+    <div class="col col-4 col-sm-4 col-md-4"></div>
+    <div style="margin-top: 2%;position: absolute;left: 15%;" class="col col-4 col-sm-4 col-md-4 ">
     <md-card id="profileCard">
       <md-card-content>
-        <button *ngIf="provider!='google.com'" class="editProfileButton" md-raised-button style="font-size: 15px;text-align: right;background-color: #1F1C18;float: right;display: block" data-toggle="modal" data-target="#editProfile">Edit Profile</button>
-        <button class="editProfileButton" md-raised-button style="font-size: 15px;text-align: right;background-color: #1F1C18;float: left;display: block" (click)="deleteAccount()" >Delete Account</button>
-        <img style="margin-left: 33.4%;display: block" class="profilepic" src="{{profilePic}}">
-        <p style="font-family: 'Open Sans';font-size: 30px;display: block;text-align: center;margin-left: 3px;margin-top: 30px">{{firstName}} {{lastName}}</p>
-        <p style="font-family: 'Open Sans';font-size: 15px;display: block;text-align: center;margin-left: 3px;margin-top: 15px">{{userEmail}}</p>
+<div class="d-flex justify-content-start">
+        <button *ngIf="provider!='google.com'" class="editProfileButton" md-raised-button style="font-size: 15px;text-align: right;background-color: #801D1A" data-toggle="modal" data-target="#editProfile">Edit Profile</button>
+        <button class="editProfileButton ml-auto p-2 " md-raised-button style="font-size: 15px;text-align: right;background-color: #1F1C18" (click)="deleteAccount()">Delete Account</button>
+</div>
+        <img style="margin: 0 auto" class="profilepic" src="{{profilePic}}">
+        <p style="margin-left:2px;font-family: 'Open Sans';font-size: 30px;display: block;text-align: center;margin-top: 30px">{{firstName}} {{lastName}}</p>
+        <p style="margin-left:2px;font-family: 'Open Sans';font-size: 15px;display: block;text-align: center;margin-top: 15px">{{userEmail}}</p>
       </md-card-content>
+      <p style="margin-left:2px;font-family: 'Open Sans';font-size: 25px;display: block;text-align: left;margin-top: 50px;">Favorites</p>
+      <div class="scrollingBox" style="overflow-y:auto;overflow-x:hidden;height: 350px;background-color: white;font-family: 'Open Sans',sans-serif">
+        <div style="text-align: left; margin-left:20px;margin-top: 10px;margin-bottom: 10px" *ngFor="let fav of favArticles" pTooltip="Author: {{fav.authorFname}} {{fav.authorLname}}" tooltipPosition="top">
+          <div *ngIf="nullcheck!=null" id="favs">
+            <button style="display: inline-block;color: black;float: left;margin-top: 4px" md-icon-button [mdMenuTriggerFor]="menu">
+              <md-icon>more_vert</md-icon>
+            </button>
+            <md-menu #menu="mdMenu">
+              <button (click)="viewArticle(fav.articleID,fav.category)" md-menu-item>
+                <md-icon>remove_red_eye</md-icon>
+                <span>View Favorite</span>
+              </button>
+              <button (click)="removeFavorite(fav.articleID)"  md-menu-item>
+                <md-icon>close</md-icon>
+                <span>Remove Favorite</span>
+              </button>
+            </md-menu>
+          <img style="border-radius: 50%;width: 50px;height: 50px;margin-right: 15px;float:left;vertical-align: middle" src="{{fav.urlToImage}}">
+          <p style="color: black;display: inline-block;clear: both;vertical-align: middle;margin-top:12px;text-align: left;width: 50%;margin-bottom: 20px">{{fav.title}}</p>
+          <p style="color: black;display: inline-block;vertical-align: middle;!important;float: right;margin-top:12px;margin-right: 10px;font-size: 15px">{{fav.category}}</p>
+
+        </div>
+  </div>
+        <div style="text-align: center" *ngIf="nullcheck==null">
+          <p style="color: black;display: inline-block;vertical-align: middle;margin-top:23%;text-align: center;font-family: 'Open Sans', sans-serif;font-size: 20px;font-weight: 500">You currently have no favorited articles</p>
+        </div>
+</div>
     </md-card>
     </div>
+    <div style="position: absolute;margin-top: 4%;margin-left: 10%"  class="col col-4 col-sm-4 col-md-4 container-fluid">
+      <canvas *ngIf="isDataAvailable" baseChart style="width: auto;margin-top: 10%;margin-left: 30%"
+              [data]="doughnutChartData"
+              [labels]="doughnutChartLabels"
+              [chartType]="doughnutChartType"
+              [options]="options"
+      ></canvas>
   </div>
   </div>
 
-<div style=" z-index: 10000 !important;" class="modal bd-example-modal-lg fade" id="editProfile" tabindex="-1" role="dialog" aria-labelledby="editProfile" aria-hidden="true">
+
+
+<p-confirmDialog styleClass="ui-confirmdialog" width="300px" #yo icon="fa fa-question-circle"></p-confirmDialog>
+
+  </div>
+
+<div style="z-index: 10000;position: absolute" id="message"><p-growl  [value]="msgs"></p-growl></div>
+
+<div style=" z-index: 10000 !important;margin-left: 60px" class="modal bd-example-modal-lg fade" id="editProfile" tabindex="-1" role="dialog" aria-labelledby="editProfile" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -93,14 +138,14 @@
           </p-accordionTab>
           <p-accordionTab header="Update First Name:">
             <label for="Fname" style="display: block; font-family: 'Audiowide',bold">Enter First Name*:</label>
-            <input type="text" style="width: 200px" pInputText name="Fname" id="Fname" [(ngModel)]="firstName" #Fname="ngModel" pattern="[a-zA-Z]*" required/>
+            <input type="text" style="width: 200px" pInputText name="Fname" id="Fname" [(ngModel)]="firstName" #Fname="ngModel" pattern="[a-z A-Z]*" required/>
             <span *ngIf="Fname.errors?.pattern"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>Please Enter Text Only.</span>
             <br><br>
             <button type="submit"  (click)="updateFirstName(Fname)" class="btn btn-warning" id="updatefirstName" [disabled]="!Fname.valid">Submit</button>
           </p-accordionTab>
           <p-accordionTab header="Update Last Name:">
             <label for="Lname" style="display: block;; font-family: 'Audiowide',bold">Enter New Last Name*:</label>
-            <input type="text" style="width: 200px" pInputText name="Lname" id="Lname" [(ngModel)]="lastName" #Lname="ngModel" pattern="[a-zA-Z]*" required/>
+            <input type="text" style="width: 200px" pInputText name="Lname" id="Lname" [(ngModel)]="lastName" #Lname="ngModel" pattern="[a-z A-Z]*" required/>
             <span *ngIf="Lname.errors?.pattern"><i style="color: red" class="fa fa-times-circle" aria-hidden="true"></i>Please Enter Text Only.</span>
             <br><br>
             <button type="submit"  (click)="updateLastName(Lname)" class="btn btn-warning" id="updatelastName" [disabled]="!Lname.valid">Submit</button>
@@ -111,6 +156,9 @@
             </label>
             <p>{{filename}}</p>
             <img *ngIf="filename!=null" id="blah" src="#" alt="your image" />
+            <div *ngIf="file&&progress!=100" style="margin-top: 20px;margin-bottom: 20px" class="progress">
+              <p style="width: 100%;color: black"><ngb-progressbar type="danger" [animated]="true" [value]="progress" [striped]="true">{{progress}}</ngb-progressbar></p>
+            </div>
             <button type="submit"  (click)="updateProfilePicture()" class="btn btn-warning" id="updateProfilePicture" [disabled]="!file">Submit</button>
           </p-accordionTab>
         </p-accordion>

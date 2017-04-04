@@ -53,16 +53,21 @@ export class SignupComponent implements OnInit{
     indicator;
     tokenData;
     googleUID;
+    data;
 
     private  pathToImg;
 
-    constructor(private credentials:CredentialService, private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any,public snackBar: MdSnackBar,private ref: ChangeDetectorRef) {
+    constructor(private credentials:CredentialService, private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any,private ref: ChangeDetectorRef) {
 
         this.msgs=[];
         this.afState = this.af;
         this.googleProvider = new firebase.auth.GoogleAuthProvider();
         this.googleProvider.addScope('profile');
         this.googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+        this.googleProvider.setCustomParameters(
+            {prompt:'select_account'}
+
+        );
         this.firebaseApp = firebaseApp;
         this.indicator=false;
         this.emailAndPass = new firebase.auth.EmailAuthProvider();
@@ -117,17 +122,26 @@ export class SignupComponent implements OnInit{
             });
 
         function setUser(){
-            that.afState.database.object('USERS/' + that.uid).set(
-                {
-                    email: that.email,
-                    firstName: that.firstName,
-                    lastName: that.lastName,
-                    profilePicURL: that.profilepic,
-                    uid: that.uid,
-                    author:false
+           var snaps= that.afState.database.object('USERS/'+that.uid,{preserveSnapshot:true});
+            snaps.subscribe(snap=>{
+                that.data= snap.val().firstName;
+            });
+            if(that.data!=null){
+                navigate();
+            }else{
+                that.afState.database.object('USERS/' + that.uid).update(
+                    {
+                        email: that.email,
+                        firstName: that.firstName,
+                        lastName: that.lastName,
+                        profilePicURL: that.profilepic,
+                        uid: that.uid,
+                        author:false
 
-                }
-            ).then(result=>navigate());
+                    }
+                ).then(result=>navigate());
+            }
+
         }
         function navigate(){
             that.router.navigate(['/home']);
@@ -142,6 +156,16 @@ export class SignupComponent implements OnInit{
         let files:FileList = target.files;
         this.file = files[0];
         this.filename = this.file.name;
+
+        var reader = new FileReader();
+
+        reader.onload = function (e:any) {
+            $('#blah')
+                .attr('src', e.target.result)
+                .width(150)
+                .height(100);
+        };
+        reader.readAsDataURL(this.file);
 
     };
 

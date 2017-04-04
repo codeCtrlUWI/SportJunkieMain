@@ -15,7 +15,9 @@ import {ViewProfileComponent} from "../view-profile/view-profile.component";
 
 
 const signupRoute: Routes = [
-  {path: 'signup', component: SignupComponent},
+  {path: 'signin', component: SignupComponent,children:[
+    {path:'',component:SignupComponent}
+  ]},
   {path: 'home', component: NavbarComponent,canActivate:[AuthGuardService],
     children:[
       {path:'',component:HomepageComponent},

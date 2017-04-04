@@ -1,4 +1,7 @@
-import {Component, OnInit, ElementRef, Inject} from '@angular/core';
+import {
+    Component, OnInit, ElementRef, Inject, ViewEncapsulation, AfterViewChecked, DoCheck,
+    OnDestroy
+} from '@angular/core';
 import {Router, ActivatedRoute} from "@angular/router";
 import {ArticleService} from "../homepage/article.service";
 import {AngularFire, FirebaseApp} from "angularfire2/index";
@@ -7,13 +10,17 @@ declare var $: any;
 import { UUID } from 'angular2-uuid';
 import * as firebase from 'firebase'
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
+import {Message, ConfirmationService} from "primeng/primeng";
 
 @Component({
+  moduleId: module.id,
   selector: 'app-view-profile',
   templateUrl: './view-profile.component.html',
-  styleUrls: ['./view-profile.component.css']
+  styleUrls: ['./view-profile.component.css'],
+  providers: [ConfirmationService],
+  encapsulation: ViewEncapsulation.None,
 })
-export class ViewProfileComponent implements OnInit {
+export class ViewProfileComponent implements OnInit,AfterViewChecked,DoCheck,OnDestroy {
 
   firstName;
   lastName;
@@ -26,7 +33,6 @@ export class ViewProfileComponent implements OnInit {
   filename;
   firebaseApp;
   provider;
-  passwordCheck;
   Password;
   storage;
   path;
@@ -34,8 +40,58 @@ export class ViewProfileComponent implements OnInit {
   uuid;
   imageLink;
   googleProvider;
+  msgs: Message[] = [];
+  progress;
+  favArticles:any[];
+  keys:any[];
+  data:any;
+  cricket;
+  football;
+  swimming;
+  display=true;
+  isDataAvailable: boolean = false;
+  nullcheck;
+  removeUserFavorite;
+  x;
 
-  constructor(private credentials:CredentialService, private as: ArticleService, private af:AngularFire, private route:ActivatedRoute, private router:Router,@Inject(FirebaseApp) firebaseApp:any) {
+
+  public doughnutChartLabels:string[] = ['Cricket', 'Football', 'Swimming'];
+  public doughnutChartData:number[] = [0, 0, 0];
+  public doughnutChartType:string = 'doughnut';
+
+  public options: any= {
+    title: {
+      display: true,
+      text: 'Category History Statistics',
+      fontColor:"#000000",
+      fontSize:25,
+      fontFamily:'Open Sans',
+      padding:20,
+    },
+    defaultFontSize:400,
+    defaults:{
+      global:{
+        defaultFontFamily:"Open Sans",
+      }
+    },
+    legend:{
+      labels:{
+        fontSize : 19,
+        fontFamily:'Open Sans',
+        padding:40,
+        fontStyle:'bold',
+        fontColor:"#000000",
+      },
+      position:'bottom',
+    }
+  };
+
+  constructor(private confirmationService: ConfirmationService,private credentials:CredentialService, private as: ArticleService, private af:AngularFire, private route:ActivatedRoute, private router:Router,@Inject(FirebaseApp) firebaseApp:any,
+              ) {
+
+
+
+    this.msgs=[];
     this.firebaseApp= firebaseApp;
     this.uuid = UUID.UUID();
 
@@ -59,15 +115,82 @@ export class ViewProfileComponent implements OnInit {
     this.googleProvider = new firebase.auth.GoogleAuthProvider();
     this.googleProvider.addScope('profile');
     this.googleProvider.addScope('https://www.googleapis.com/auth/userinfo.profile');
+
+
+var keys=[];
+    var that=this;
+
+
+    var favSubscribe= this.af.database.object('/USERS/'+this.uid+'/favorites');
+
+    favSubscribe.subscribe(()=>{
+      var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
+      ref.on('value', (snapshot) => {
+        keys=[];
+        console.log(snapshot.val());
+        this.nullcheck= snapshot.val();
+        for(var i in snapshot.val()){
+          var articlesref= firebase.database().ref('/ARTICLES/'+snapshot.val()[i]);
+          articlesref.once('value', (snap) => {
+            keys.unshift(snap.val());
+          });
+        }
+      return Promise.resolve(keys);
+        });
+      setTimeout(()=>{
+        this.favArticles= keys;
+      },300);
+      });
+
+
+
+    var cricketref= firebase.database().ref('/USERS/'+this.uid+'/categoriesClicked/Cricket');
+    var footballref= firebase.database().ref('/USERS/'+this.uid+'/categoriesClicked/Football');
+    var swimmingref= firebase.database().ref('/USERS/'+this.uid+'/categoriesClicked/Swimming');
+    console.log(cricketref);
+
+    var categorySubscribe= this.af.database.object('/USERS/'+this.uid+'/categoriesClicked');
+    categorySubscribe.subscribe(()=>{
+
+      cricketref.once('value',snapshot=>{
+        this.cricket= snapshot.val();
+        this.cricket= parseFloat(this.cricket);
+
+      }).then(()=>{
+        footballref.once('value',snapshot=>{
+          this.football= snapshot.val();
+          this.football= Number(this.football);
+        });
+      }).then(()=>{
+        swimmingref.once('value',snapshot=>{
+          this.swimming= parseInt(snapshot.val());
+        });
+      }).then(()=>{
+        this.doughnutChartData = [this.cricket, this.football, this.swimming];
+      }).then(()=>{
+        this.isDataAvailable = true;
+      })
+
+
+    });
+
+
+
   }
 
   ngOnInit() {
-    $('#particleRow').particleground(
-    {
-      dotColor: 'black',
-          lineColor:'#c91010'
-    });
+  }
 
+  ngAfterViewChecked(){
+
+    $('#particleRow').particleground(
+        {
+          dotColor: 'black',
+          lineColor:'#c91010'
+        });
+  }
+
+  ngDoCheck() {
 
   }
 
@@ -95,11 +218,16 @@ export class ViewProfileComponent implements OnInit {
 
 
   updateFirstName(){
-    this.user.update({firstName:this.firstName});
+    this.user.update({firstName:this.firstName})
+        .then(()=>{
+      this.msgs.push({severity:'success', summary:'First Name Updated', detail:'Your First Name has been changed!'});
+    })
   }
 
   updateLastName(firstName){
-    this.user.update({lastName:this.lastName});
+    this.user.update({lastName:this.lastName}).then(()=>{
+      this.msgs.push({severity:'success', summary:'Last Name Updated', detail:'Your Last Name has been changed!'});
+    })
   }
 
   updateEmail(){
@@ -108,9 +236,10 @@ export class ViewProfileComponent implements OnInit {
     var returnedPassword=  this.credentials.returnPassword();
     var credential = firebase.auth.EmailAuthProvider.credential(returnedEmail,returnedPassword);
     user.reauthenticate(credential).then(()=> {
-      user.updateEmail(this.userEmail)
+      user.updateEmail(this.userEmail);
+      this.msgs.push({severity:'success', summary:'Email Updated', detail:'Your Email has been changed!'});
     }, function(error) {
-      // An error happened.
+      this.msgs.push({severity:'error', summary:'Updating Email failed', detail:'An error occurred.'});
     });
 
     user.updateEmail(this.userEmail).then(()=> {
@@ -125,15 +254,14 @@ export class ViewProfileComponent implements OnInit {
     console.log(this.Password);
 
     var user = this.firebaseApp.auth().currentUser;
-    console.log(this.credentials.returnEmail(),
-        this.credentials.returnPassword());
     var returnedEmail= this.credentials.returnEmail();
     var returnedPassword=  this.credentials.returnPassword();
     var credential= firebase.auth.EmailAuthProvider.credential(returnedEmail,returnedPassword);
     user.reauthenticate(credential).then(()=> {
-      user.updatePassword(this.Password)
+      user.updatePassword(this.Password);
+      this.msgs.push({severity:'success', summary:'Password Updated', detail:'Password has been changed!'});
     }, function(error) {
-      // An error happened.
+      this.msgs.push({severity:'error', summary:'Updating Password failed', detail:'An error occurred.'});
     });
     user.updatePassword(this.Password).then(function() {
       // Update successful.
@@ -144,6 +272,7 @@ export class ViewProfileComponent implements OnInit {
   }
 
   updateProfilePicture(){
+    this.msgs.push({severity:'warn', summary:'Updating Profile Picture...', detail:'Please Wait'});
     this.storage = this.firebaseApp.storage().ref();
     this.path = "Profile Pictures/" + this.userEmail + "-" + this.uid + "-" + this.uuid;
     this.storageref = this.storage.child(this.path);
@@ -154,6 +283,7 @@ export class ViewProfileComponent implements OnInit {
       // Observe state change events such as progress, pause, and resume
       // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
       var progress = Math.floor((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+      that.progress=progress;
       console.log('Upload is ' + progress + '% done');
       switch (snapshot.state) {
         case firebase.storage.TaskState.PAUSED: // or 'paused'
@@ -164,18 +294,24 @@ export class ViewProfileComponent implements OnInit {
           break;
       }
     }, function (error) {
-      // Handle unsuccessful uploads
+      this.msgs.push({severity:'error', summary:'Updating Profile Picture failed', detail:'An error occurred.'});
     }, function () {
       // Handle successful uploads on complete
       // For instance, get the download URL: https://firebasestorage.googleapis.com/...
       var imglink = uploadTask.snapshot.downloadURL;
-      console.log(imglink);
       that.imageLink = imglink;
       that.user.update({profilePicURL:imglink});
+      this.
+      this.msgs.push({severity:'success', summary:'Profile Picture Updated', detail:'Profile Picture has been updated!'});
   });
   }
 
   deleteAccount(){
+    this.confirmationService.confirm({
+      header: 'SportJunkie Account Deletion...',
+      message: 'Are you sure that you want to delete your account? :(',
+      accept: () => {
+
     var user = this.firebaseApp.auth().currentUser;
     var that=this;
 
@@ -215,18 +351,80 @@ export class ViewProfileComponent implements OnInit {
         // An error happened.
       });
       this.user.remove().then(()=>{
-        reloadAndRoute();
+        this.msgs = [];
+        this.msgs.push({severity:'info', summary:':(', detail:'Delete account in progress...'});
+        setTimeout(()=>{
+          reloadAndRoute();
+        },1500);
+
+
       });
 
     }
     function reloadAndRoute(){
-      that.router.navigate(['/signup']);
+      that.router.navigate(['/signin']);
       location.reload();
     }
+      }
+    });
 
 
 
 
+  }
+
+  ngOnDestroy(){
+
+  }
+
+
+  viewArticle(articleID,category){
+    if(category=='Cricket'){
+      this.as.getArticle(articleID);
+      this.router.navigate(['cricket/view/',articleID]);
+    }else if(category=='Football'){
+      this.as.getArticle(articleID);
+      this.router.navigate(['football/view/',articleID]);
+    }else if(category=='Swimming'){
+      this.as.getArticle(articleID);
+      this.router.navigate(['swimming/view/',articleID]);
+    }
+
+  }
+
+  removeFavorite(articleID){
+
+      this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
+      var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
+      ref.once('value')
+          .then((snapshots) => {
+            this.x=0;
+            snapshots.forEach(snapshot=>{
+              if(snapshot.val()===articleID){
+                console.log(snapshot.val());
+                this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/'+snapshot.key);
+                this.removeUserFavorite.remove();
+                this.x= this.x+1;
+              }
+            })
+          }).then(()=>{
+        this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
+        var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
+        ref.once('value')
+            .then((snapshots) => {
+              this.x=0;
+              snapshots.forEach(snapshot=>{
+                if(snapshot.key){
+                  console.log(snapshot.val());
+                  this.removeUserFavorite.update({[this.x]:snapshot.val()});
+                  console.log(this.x);
+                  this.x= this.x+1;
+                }
+              });
+              this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/'+this.x,{preserveSnapshot:true});
+              this.removeUserFavorite.remove();
+            });
+      });
   }
 
 
@@ -234,7 +432,7 @@ export class ViewProfileComponent implements OnInit {
   logout() {
     this.af.auth.logout().then(
         (success) => {
-          this.router.navigate(['/signup']);
+          this.router.navigate(['/signin']);
           this.af.auth.unsubscribe();
           window.location.reload();
         })

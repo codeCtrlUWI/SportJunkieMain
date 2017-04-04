@@ -1,14 +1,14 @@
-
 <div style="color: indianred;position: fixed;margin-left: 50%;margin-top: 22%" class="la-ball-clip-rotate-multiple la-3x">
     <div></div>
     <div></div>
-    <p>Please Wait...</p>
 </div>
 
-<div style="background-color: darkgrey;height: 100%;width: 100%" class="container-fluid">
 
 
-    <div class="row" style="margin-bottom: 100px">
+<div style="background-color: darkgray;height: 100%;width: 100%" class="container-fluid">
+
+
+    <div class="row" style="margin-bottom: 90px">
         <nav class="navbar navbar-toggleable-xl navbar-inverse bg-inverse fixed-top" >
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -30,9 +30,9 @@
                     </li>
                 </ul>
             </div>
-            <p style="color: white;width: 700px;margin-right: 30%;margin-top: 10px" class="d-flex justify-content-start">Currently logged in as: {{firstName}} {{lastName}}</p>
+            <p style="color: white;margin-top: 10px;text-align: center;display: inline-flex;align-items: center;justify-content: center;width: 100%" class="d-flex justify-content-start">Currently logged in as: {{firstName}} {{lastName}}</p>
             <div style="margin-right: 40px" class="d-flex justify-content-start">
-                <button class="viewProfileButton"  (click)="viewProfile()" md-raised-button style="font-family: 'Audiowide',bold"> Profile</button>
+                <button class="logoutButton"  (click)="viewProfile()" md-raised-button style="font-family: 'Audiowide',bold"> Profile</button>
             </div>
             <div class="d-flex justify-content-start">
                 <button class="logoutButton" (click)="logout()" md-raised-button style="font-family: 'Audiowide',bold"> Logout</button>
@@ -42,41 +42,46 @@
     <!--_toggleSidebar()-->
 
 
+
     <div style="background-color: darkgrey!important;" class="row">
-        <div class="col-md-4">
+        <div class="col col-4 col-sm-4 col-md-4">
 
         </div>
-        <div  style="font-family: 'Open Sans',sans-serif" class="col-md-5">
+        <div  style="font-family: 'Open Sans',sans-serif" class="col col-5 col-sm-5 col-md-5 fadeInDown">
+            <div *ngFor="let starter of articles|slice:0:1">
+            <h4 *ngIf="starter.articleID" style="font-family: 'Open Sans',sans-serif;font-size: 26px;margin-bottom: 0!important;">Latest Articles </h4>
+            <hr *ngIf="starter.articleID"  style="width: 100%;background-color: black;margin-bottom: 25px">
+            </div>
             <div *ngFor="let article of articles">
-            <md-card (click)="viewArticle(article.articleID)"  class="example-card">
-                <div style="position: absolute;" class="Headings">
-                    <md-card-title id="titleOfCard">{{article.title}}</md-card-title>
-                    <hr style="background-color: white">
-                    <md-card-subtitle style="margin-left: 3px;color: white">{{article.category}}</md-card-subtitle>
-                </div>
-                <md-card-content style="">
-                    <img style="height: 440px;display: inline-block;z-index: -1" md-card-image src="{{article.urlToImage}}">
-                    <p>
-                        {{article.subtitle}}
-                    </p>
-                </md-card-content>
-            </md-card>
+                <md-card (click)="increaseClicks(article.articleID,article.numberOfClicks,article.category);viewArticle(article.articleID)"  class="example-card">
+                    <div style="position: absolute;" class="Headings">
+                        <md-card-title id="titleOfCard">{{article.title}}</md-card-title>
+                        <hr style="background-color: white">
+                        <md-card-subtitle style="margin-left: 3px;color: white">{{article.category}}</md-card-subtitle>
+                    </div>
+                    <md-card-content style="">
+                        <img style="height: 440px;display: inline-block;z-index: -1" md-card-image src="{{article.urlToImage}}">
+                        <p>
+                            {{article.subtitle}}
+                        </p>
+                    </md-card-content>
+                </md-card>
             </div>
         </div>
 
-        <div id="list" class="col-md-3">
-            <md-card style="position: fixed;width: 425px;opacity: 0.85;background-color: #971313" *ngFor="let starter of featuredArticles|slice:0:1">
+        <div style="position: fixed;right: 0;"  id="list" class="col col-3 col-sm-3 col-md-3">
+            <md-card id="featuredCard" style="position: relative;opacity: 0.85;background-color: #971313;overflow-y: auto" *ngFor="let starter of featuredArticles|slice:0:1">
                 <md-card-content>
                     <div>
-                    <h2 style="font-family: 'Open Sans';text-align: left;margin-left: 20px;color: white" *ngIf="starter.articleID"> Featured </h2>
-                    <hr *ngIf="starter.articleID" style="width: 90%;margin-left: 20px;background-color: white">
+                        <h2 style="font-family: 'Open Sans';text-align: left;margin-left: 20px;color: white" *ngIf="starter.articleID"> Featured </h2>
+                        <hr *ngIf="starter.articleID" style="width: 90%;margin-left: 20px;background-color: white">
                     </div>
                     <ol style="background-color: #971313; font-family: 'Open Sans',sans-serif ">
 
-                        <li id="featuredItems" style="margin-top: 20px;cursor: pointer;width: 60%;color: white" *ngFor="let featured of featuredArticles|slice:0:10"  (click)="viewArticle(featured.articleID)">
+                        <li id="featuredItems" style="margin-top: 20px;cursor: pointer;width: 100%;color: white;line-height: 5px;text-overflow: ellipsis;" *ngFor="let featured of featuredArticles|slice:0:10"  (click)="increaseClicks(featured.articleID,featured.numberOfClicks,featured.category);viewArticle(featured.articleID)">
                             <div *ngIf="featured.articleID" ></div>
                             <img style="display:inline-block;margin-left: 3%" class="img-circle" [src]="featured.urlToImage">
-                            <div style="display: inline-block;position: absolute;width: 59%;margin-top: 10px">
+                            <div style="display: inline-block;position: relative;width: 62%;margin-top: 13px;margin-bottom: 20px;vertical-align: middle">
                                 <p style="display: inline-block;margin-left: 5%;word-wrap: break-word;text-align:left">{{featured.title}}</p>
                             </div>
 

@@ -2,6 +2,151 @@
     font-family: 'Open Sans', sans-serif;
 }
 
-.ui-panel{
-    margin-bottom: 30px;
+
+
+hr.horizon {
+    border-top: 4px double #8c8b8b;
+    text-align: center;
 }
+hr.horizon:after {
+    font-family: FontAwesome;
+    content: "\f1e3";
+    display: inline-block;
+    position: relative;
+    top: -15px;
+    padding: 0 15px;
+    background: white;
+    color: black;
+    font-size: 18px;
+}
+
+:host >>> .ui-panel .ui-panel-titlebar{
+    display: none !important;
+    padding: 0 !important;
+    border-width: 0 !important;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.vertical-line{
+    width: 2px;
+    background-color: black;
+    border: thin ;
+    border-radius: 2px;
+    padding-top: 3% !important;
+}
+
+.horizontal{
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to left, #f0f0f0, #8c8c8c, #f0f0f0);
+}
+
+#featuredItems:hover{
+    color: black!important;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+}
+#featuredItems{
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+}
+
+
+
+
+#titleOfCard{
+    font-weight:600;
+    font-size: 34px;
+    word-wrap: break-word;
+    line-height: 30px;
+    color: white;
+}
+
+.Headings{
+    background-color: rgba(0, 0, 0, 0.7);
+    color: rgba(0, 0, 0, 0.7);
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 20px;
+    padding-top: 10px;
+}
+
+.navbar{
+    background: rgb(170, 0, 0);
+    background: -moz-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -webkit-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -o-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -ms-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: linear-gradient(125deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+}
+
+
+.dropdown .dropdown-menu{
+    background: rgb(170, 0, 0);
+    background: -moz-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -webkit-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -o-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: -ms-linear-gradient(35deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+    background: linear-gradient(125deg, rgb(170, 0, 0) 23%, rgb(0, 0, 0) 70%);
+
+}
+
+.dropdown .dropdown-menu{
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+
+.logoutButton:hover{
+    background-color: red;
+}
+
+.navbar{
+    margin-bottom: 0;
+}
+
+.navbar .dropdown:hover > .dropdown-menu{
+    display:block;
+}
+
+.hvr-icon-sink-away:before{
+    content: "\f01a";
+    font-size: 17px;
+}
+
+.example-card{
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    margin-bottom: 30px;
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+}
+
+#realList{
+    margin-left: 40px !important;
+}
+
+.img-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.container-fluid {
+    opacity:0;  /* make things invisible upon start */
+    animation:fadeIn ease-in 1; /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+
+    animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+
+    animation-duration:0.3s;
+    animation-delay: 0.4s
+}
+
+
+.material-icons{
+    animation: fadeIn ease-in 1;
+    animation-fill-mode:forwards;
+
+    animation-duration: 0.3s;
+}
+
