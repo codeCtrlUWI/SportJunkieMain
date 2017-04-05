@@ -53,17 +53,15 @@
         <hr *ngIf="starter.articleID"  style="width: 100%;background-color: black;margin-bottom: 25px">
       </div>
       <div *ngFor="let article of articles">
-        <md-card *ngIf="article.category=='Swimming'" (click)="increaseClicks(article.articleID,article.numberOfClicks,article.category);viewArticle(article.articleID)"   class="example-card">
-          <div style="position: absolute;" class="Headings">
+        <md-card *ngIf="article.category=='Swimming'"  class="example-card">
+          <div (click)="increaseClicks(article.articleID,article.numberOfClicks,article.category);viewArticle(article.articleID)" style="position: absolute;" class="Headings">
             <md-card-title id="titleOfCard">{{article.title}}</md-card-title>
             <hr style="background-color: white">
             <md-card-subtitle style="margin-left: 3px;color: white">{{article.category}}</md-card-subtitle>
           </div>
-          <md-card-content style="">
+          <md-card-content (click)="increaseClicks(article.articleID,article.numberOfClicks,article.category);viewArticle(article.articleID)" style="">
             <img style="height: 440px;display: inline-block;z-index: -1" md-card-image src="{{article.urlToImage}}">
-            <p>
-              {{article.subtitle}}
-            </p>
+            <p style="font-size: 16px;font-weight: 600">{{article.subtitle}}</p>
           </md-card-content>
         </md-card>
       </div>

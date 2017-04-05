@@ -1,4 +1,7 @@
-import {Component, OnInit, ViewEncapsulation, Inject, Pipe, ChangeDetectionStrategy} from '@angular/core';
+import {
+    Component, OnInit, ViewEncapsulation, Inject, Pipe, ChangeDetectionStrategy,
+    ChangeDetectorRef
+} from '@angular/core';
 import {FirebaseApp, AngularFire, FirebaseObjectObservable, FirebaseListObservable} from "angularfire2";
 import {Router} from "@angular/router";
 import {ArticleService} from "../homepage/article.service";
@@ -16,29 +19,37 @@ import * as firebase from 'firebase';
 
 
 
-export class SwimmingComponent implements OnInit{
+export class SwimmingComponent implements OnInit {
 
 
   firebaseApp;
   _opened;
-  featuredArticles: any[];
+  featuredArticles:any[];
   articles:any[];
-  multipleArticles: FirebaseListObservable<any>;
+  multipleArticles:FirebaseListObservable<any>;
   uid;
-  show=0;
+  show = 0;
   firstName;
   lastName;
   pushArray:any[];
+  x;
+  addUserFavorite;
+  removeUserFavorite;
+  favorited;
+  keys;
+  check;
+  galleryImages;
+  images;
 
-  user: FirebaseObjectObservable<any>;
+  user:FirebaseObjectObservable<any>;
 
-  constructor(private as:ArticleService, private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any) {
+  constructor(private as:ArticleService, private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any,private cdr:ChangeDetectorRef) {
 
 
     this.firebaseApp = firebaseApp;
 
 
-    var articlesref= firebase.database().ref('/ARTICLES');
+    var articlesref = firebase.database().ref('/ARTICLES');
 
     articlesref.on('value', (snap) => {
       // snap.val() comes back as an object with keys
@@ -49,14 +60,15 @@ export class SwimmingComponent implements OnInit{
         obj._key = key;
         return obj;
       });
-      this.articles=dataWithKeys; // This is a synchronized array
+      this.articles = dataWithKeys; // This is a synchronized array
       console.log(this.articles);
       this.articles.reverse();
     });
+
+
   }
 
-  ngOnInit(){
-
+  ngOnInit() {
 
 
     var that = this;
@@ -71,33 +83,64 @@ export class SwimmingComponent implements OnInit{
     });
 
 
-    var rArray=[];
+    var rArray = [];
 
-    var farticlesref= firebase.database().ref('/ARTICLES');
-    farticlesref.orderByChild("numberOfClicks").on("value",function(data) {
-      rArray=[];
-      data.forEach(function(snapshot) {
-        let featuredData= snapshot.val();
+    var farticlesref = firebase.database().ref('/ARTICLES');
+    farticlesref.orderByChild("numberOfClicks").on("value", function (data) {
+      rArray = [];
+      data.forEach(function (snapshot) {
+        let featuredData = snapshot.val();
         rArray.push(featuredData);
         return false;
       });
       console.log(rArray);
-      that.featuredArticles= rArray;
+      that.featuredArticles = rArray;
       that.featuredArticles.reverse();
       return false;
     });
-  };
+
+
+    this.addUserFavorite = this.af.database.object('/USERS/' + this.uid + '/favorites/', {preserveSnapshot: true});
+
+    this.addUserFavorite.subscribe(()=> {
+      var keysFav = [];
+      var ref = firebase.database().ref('/USERS/' + this.uid + '/favorites/');
+      ref.once('value')
+          .then((snapshots) => {
+            console.log(snapshots.val());
+            keysFav.push(snapshots.val());
+          }).then(()=> {
+        this.keys = keysFav;
+        console.log(keysFav);
+      });
+      this.cdr.markForCheck();
+
+    })
+
+  }
 
 
 
+  viewArticle(articleID){
+    this.galleryImages= this.af.database.object('/ARTICLES/'+articleID+'/galleryID/',{preserveSnapshot:true});
+    this.galleryImages.subscribe(snapshotter=>{
+      var images=[];
+      var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
+      galleryRef.once('value').then(snapshots=>{
+        snapshots.forEach(snapshot=>{
+          images.push(snapshot.val());
+          console.log(snapshot.val());
+        })
+      }).then(()=>{
+        this.images=images;
+        console.log(this.images.length);
+        console.log(images.length);
+      });
 
-
-
-
-  viewArticle(articleId){
-    this.as.getArticle(articleId);
-    this.router.navigate(['swimming/view/',articleId]);
-
+    });
+    this.as.setArticleImages(this.images);
+    this.as.getArticle(articleID);
+    this.router.navigate(['swimming/view/',articleID]);
   }
 
   viewProfile(){
@@ -120,6 +163,65 @@ export class SwimmingComponent implements OnInit{
     })
 
 
+  }
+
+
+  addToFavorite(articleID){
+    this.x=0;
+    var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
+    ref.once('value')
+        .then((snapshots) => {
+          this.x=0;
+          snapshots.forEach(snapshot=>{
+            if(snapshot.val()!=articleID){
+              this.addUserFavorite.update({[this.x]:snapshot.val()});
+              this.x= this.x+1;
+            }else{
+              this.addUserFavorite.update({[snapshot.key]:articleID});
+            }
+
+          });
+          this.addUserFavorite.update({[this.x]:articleID});
+        });
+    this.favorited=1;
+  }
+
+
+  removeFavorite(articleID){
+
+    this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
+    var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
+    ref.once('value')
+        .then((snapshots) => {
+          this.x=0;
+          snapshots.forEach(snapshot=>{
+            if(snapshot.val()===articleID){
+              console.log(snapshot.val());
+              this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/'+snapshot.key);
+              this.removeUserFavorite.remove();
+              this.x= this.x+1;
+            }
+          })
+        }).then(()=>{
+      this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
+      var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
+      ref.once('value')
+          .then((snapshots) => {
+            this.x=0;
+            snapshots.forEach(snapshot=>{
+              if(snapshot.key){
+                console.log(snapshot.val());
+                this.removeUserFavorite.update({[this.x]:snapshot.val()});
+                console.log(this.x);
+                this.x= this.x+1;
+              }
+            });
+            this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/'+this.x,{preserveSnapshot:true});
+            this.removeUserFavorite.remove();
+          });
+    });
+
+    this.favorited=0;
   }
 
 

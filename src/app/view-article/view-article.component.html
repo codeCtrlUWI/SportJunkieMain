@@ -58,8 +58,15 @@
 
  <br><br>
         <hr class="horizon" style="margin-bottom: 50px">
-    <p style="font-family: 'Open Sans';line-height: 24px;font-size: 17px;font-weight: 500" *ngIf="article">{{article.articleData }}</p>
+    <p style="font-family: 'Open Sans';line-height: 24px;font-size: 17px;font-weight: 500;text-indent: 8%" *ngIf="article">{{article.articleData }}</p>
+        <hr class="horizon" style="margin-bottom: 50px;margin-top: 5%">
+        <div *ngIf="showGallery!=0">
+            <div style="margin-top: 14%;margin-bottom: 6%" class="galleria">
+                <img *ngFor="let image of images" src="{{image}}">
+            </div>
+        </div>
     </p-panel>
+
     </div>
     <div class="col col-2 col-sm-2 col-md-2">
 

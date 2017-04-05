@@ -35,6 +35,8 @@ export class HomepageComponent implements OnInit{
     firstName;
     lastName;
     pushArray:any[];
+    galleryImages;
+    images;
 
 
     user: FirebaseObjectObservable<any>;
@@ -94,6 +96,12 @@ export class HomepageComponent implements OnInit{
           that.featuredArticles.reverse();
           return false;
           });
+
+
+
+
+
+
       };
 
 
@@ -109,10 +117,27 @@ export class HomepageComponent implements OnInit{
 
 
 
-    viewArticle(articleId){
-        this.as.getArticle(articleId);
-        this.router.navigate(['home/view/',articleId]);
+    viewArticle(articleID){
 
+        this.galleryImages= this.af.database.object('/ARTICLES/'+articleID+'/galleryID/',{preserveSnapshot:true});
+        this.galleryImages.subscribe(snapshotter=>{
+            var images=[];
+            var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
+            galleryRef.once('value').then(snapshots=>{
+                snapshots.forEach(snapshot=>{
+                    images.push(snapshot.val());
+                    console.log(snapshot.val());
+                })
+            }).then(()=>{
+                this.images=images;
+                console.log(this.images.length);
+                console.log(images.length);
+            });
+
+        });
+        this.as.setArticleImages(this.images);
+        this.as.getArticle(articleID);
+        this.router.navigate(['swimming/view/',articleID]);
     }
 
     viewProfile(){

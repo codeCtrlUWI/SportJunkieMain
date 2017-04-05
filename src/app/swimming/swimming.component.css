@@ -84,6 +84,7 @@
     margin-bottom: 30px;
     font-family: 'Open Sans', sans-serif;
     cursor: pointer;
+    padding-bottom: 35px;
 }
 
 #realList{
@@ -109,7 +110,12 @@
 }
 
 
+.material-icons{
+    animation: fadeIn ease-in 1;
+    animation-fill-mode:forwards;
 
+    animation-duration: 0.3s;
+}
 
 
 

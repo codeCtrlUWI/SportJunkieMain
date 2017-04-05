@@ -24,11 +24,11 @@ import {ViewProfileComponent} from "../view-profile/view-profile.component";
 import {AccordionModule} from 'primeng/primeng';
 import {CredentialService} from "../view-profile/credential.service";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
-import {NgPipesModule} from 'ngx-pipes';
 import {ConfirmDialogModule} from 'primeng/primeng';
 import {TooltipModule} from 'primeng/primeng';
 import { AmChartsModule } from "amcharts3-angular2";
 import { ChartsModule } from 'ng2-charts/ng2-charts';
+import {GalleriaModule} from 'primeng/primeng';
 
 
 
@@ -50,11 +50,11 @@ import { ChartsModule } from 'ng2-charts/ng2-charts';
       TabViewModule,
       AccordionModule,
       NgbModule,
-    NgPipesModule,
       ConfirmDialogModule,
       TooltipModule,
       AmChartsModule,
-      ChartsModule
+      ChartsModule,
+      GalleriaModule
 
   ],
   providers:[ArticleService, AuthGuardService,CredentialService],

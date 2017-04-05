@@ -17,4 +17,8 @@ export class ArticleService {
 
 }
 
+setArticleImages(articleImages){
+  localStorage.setItem('articleImages', JSON.stringify({articleImageDem: articleImages}));
+}
+
 }

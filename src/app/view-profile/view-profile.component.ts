@@ -53,6 +53,8 @@ export class ViewProfileComponent implements OnInit,AfterViewChecked,DoCheck,OnD
   nullcheck;
   removeUserFavorite;
   x;
+  galleryImages;
+  images;
 
 
   public doughnutChartLabels:string[] = ['Cricket', 'Football', 'Swimming'];
@@ -379,6 +381,27 @@ var keys=[];
 
 
   viewArticle(articleID,category){
+
+    this.galleryImages= this.af.database.object('/ARTICLES/'+articleID+'/galleryID/',{preserveSnapshot:true});
+    this.galleryImages.subscribe(snapshotter=>{
+      var images=[];
+      var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
+      galleryRef.once('value').then(snapshots=>{
+        snapshots.forEach(snapshot=>{
+          images.push(snapshot.val());
+          console.log(snapshot.val());
+        })
+      }).then(()=>{
+        this.as.setArticleImages(images);
+        this.images=images;
+        console.log(this.images.length);
+        console.log(images.length);
+      });
+
+    });
+
+
+
     if(category=='Cricket'){
       this.as.getArticle(articleID);
       this.router.navigate(['cricket/view/',articleID]);

@@ -1,11 +1,13 @@
 import 'rxjs/add/operator/switchMap';
-import {Component, OnInit, ElementRef, OnDestroy} from '@angular/core';
+import {Component, OnInit, ElementRef, OnDestroy, AfterViewChecked, NgZone} from '@angular/core';
 import {ActivatedRoute, Params, Router, NavigationEnd, NavigationStart} from '@angular/router';
 import { FirebaseObjectObservable, AngularFire} from 'angularfire2';
 import {Location }  from '@angular/common';
 import {ArticleService} from "../homepage/article.service";
 import * as firebase from 'firebase'
 declare var $: any;
+declare var Galleria: any;
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   moduleId: module.id,
@@ -16,7 +18,7 @@ declare var $: any;
 
 
 
-export class ViewArticleComponent implements OnInit{
+export class ViewArticleComponent implements OnInit,AfterViewChecked{
 
 
   uid;
@@ -37,16 +39,21 @@ export class ViewArticleComponent implements OnInit{
   x;
   favorites;
   keys:any[];
+  images: any[];
+  galleryImages;
+  showGallery=1;
 
 
 
   article:any;
 
-  constructor(private af:AngularFire, private as: ArticleService, private route:ActivatedRoute, private location: Location,private element: ElementRef, private router:Router){
+  constructor(private af:AngularFire, private as: ArticleService, private route:ActivatedRoute, private location: Location,private element: ElementRef, private router:Router, private cdr:ChangeDetectorRef){
     this.scrollUp = this.router.events.subscribe((path) => {
       element.nativeElement.scrollIntoView();
-    });
 
+
+
+    });
 
 
 
@@ -55,7 +62,7 @@ export class ViewArticleComponent implements OnInit{
   ngOnInit(){
 
 
-    var that = this;
+
     this.af.auth.subscribe(authData=>this.uid = authData.uid);
     this.show = 1;
 
@@ -93,11 +100,40 @@ export class ViewArticleComponent implements OnInit{
       });
     });
 
+    var currentUser = JSON.parse(localStorage.getItem('articleImages'));
+    this.images= currentUser.articleImageDem;
 
+    this.galleryImages= this.af.database.object('/ARTICLES/'+this.articleID+'/galleryID/',{preserveSnapshot:true});
+    this.galleryImages.subscribe(snapshotter=>{
+      var images=[];
+      var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
+      galleryRef.once('value').then(snapshots=>{
+        snapshots.forEach(snapshot=>{
+          images.push(snapshot.val());
+          console.log(snapshot.val());
+        })
+      }).then(()=>{
+        if(images!=null){
+          this.images=images;
+          this.as.setArticleImages(images);
+        }
+        Galleria.loadTheme('https://cdnjs.cloudflare.com/ajax/libs/galleria/1.5.5/themes/classic/galleria.classic.min.js');
+        Galleria.configure({
+          lightbox: true,
+          transition: 'fade',
+          autoplay: 4000
+        });
+        Galleria.run('.galleria');
+        if(images.length==0){
+          this.showGallery=0;
+        }
+    });
 
     this.addUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
 
 
+
+  })
   }
 
 
@@ -169,6 +205,10 @@ export class ViewArticleComponent implements OnInit{
 
 
     this.favorited=0;
+  }
+
+  ngAfterViewChecked(){
+
   }
 
 
