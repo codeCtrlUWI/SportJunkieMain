@@ -22,7 +22,6 @@ import {TabViewModule} from 'primeng/primeng';
 
 
 
-
 export const firebaseConfig = {
   apiKey: "AIzaSyCk_oQCj08uydAWGPGDi6lGDKmhrJuBtAQ",
   authDomain: "official-sjapp.firebaseapp.com",

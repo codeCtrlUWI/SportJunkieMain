@@ -29,6 +29,7 @@ import {TooltipModule} from 'primeng/primeng';
 import { AmChartsModule } from "amcharts3-angular2";
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 import {GalleriaModule} from 'primeng/primeng';
+import { LocationStrategy, HashLocationStrategy} from '@angular/common';
 
 
 
@@ -57,7 +58,7 @@ import {GalleriaModule} from 'primeng/primeng';
       GalleriaModule
 
   ],
-  providers:[ArticleService, AuthGuardService,CredentialService],
+  providers:[ArticleService, AuthGuardService,CredentialService,{ provide: LocationStrategy, useClass: HashLocationStrategy }],
   declarations: [SignupComponent,ViewArticleComponent, HomepageComponent, CricketComponent,FootballComponent,SwimmingComponent,EmptyComponent,NavbarComponent,ViewProfileComponent],
 })
 export class SignupModule { }

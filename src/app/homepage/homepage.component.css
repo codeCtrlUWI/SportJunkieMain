@@ -107,9 +107,70 @@ color: black!important;
     animation-duration:0.4s;
     animation-delay: 0.49s
 }
+.ui-tabview {
+    background-color: #971313;
+    width: 100%;
+    opacity: 0.85
+}
+.ui-tabview-panel .ui-widget-content{
+    overflow-y: scroll;
+}
 
+.ui-tabview-panel{
+    color: white!important;
+}
 
+#scrollingCard::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+    border-radius: 15px;
+    background-color: #CCCCCC;
+}
 
+#scrollingCard::-webkit-scrollbar
+{
+    width: 4px;
+    background-color: #F5F5F5;
+    padding-bottom: -20px;
+}
+
+#scrollingCard::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    background-color: black;
+    background-image: -webkit-linear-gradient(90deg,
+    transparent,
+    rgba(0, 0, 0, 0.4) 50%,
+    transparent,
+    transparent)
+}
+
+#list::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.9);
+    border-radius: 15px;
+    background-color: #CCCCCC;
+    padding-right: -15px;
+}
+
+#list::-webkit-scrollbar
+{
+    width: 4px;
+    background-color: #F5F5F5;
+    padding-bottom: -20px;
+    padding-right: -5px;
+}
+
+#list::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    background-color: black;
+    background-image: -webkit-linear-gradient(90deg,
+    transparent,
+    rgba(0, 0, 0, 0.4) 50%,
+    transparent,
+    transparent)
+}
 
 
 

@@ -11,6 +11,7 @@ import * as firebase from 'firebase'
   selector: 'app-football',
   templateUrl: './football.component.html',
   styleUrls: ['./football.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 
 
@@ -31,6 +32,7 @@ export class FootballComponent implements OnInit{
   pushArray:any[];
   galleryImages;
   images;
+  scores;
 
   user: FirebaseObjectObservable<any>;
 
@@ -79,15 +81,36 @@ export class FootballComponent implements OnInit{
     farticlesref.orderByChild("numberOfClicks").on("value",function(data) {
       rArray=[];
       data.forEach(function(snapshot) {
-        let featuredData= snapshot.val();
-        rArray.push(featuredData);
-        return false;
+        if(snapshot.val().category=='Football') {
+          let featuredData = snapshot.val();
+          rArray.push(featuredData);
+          return false;
+        }
       });
       console.log(rArray);
       that.featuredArticles= rArray;
       that.featuredArticles.reverse();
       return false;
     });
+
+
+
+
+    var score= firebase.database().ref('/SCORES');
+    score.on('value', (snap) => {
+      // snap.val() comes back as an object with keys
+      // these keys need to be come "private" properties
+      let data = snap.val();
+      let dataWithKeys = Object.keys(data).map((key) => {
+        var obj = data[key];
+        obj._key = key;
+        return obj;
+      });
+      this.scores=dataWithKeys; // This is a synchronized array
+      console.log(this.scores);
+      this.scores.reverse();
+    });
+
   };
 
 
@@ -104,8 +127,8 @@ export class FootballComponent implements OnInit{
 
 
   viewArticle(articleID){
-    this.galleryImages= this.af.database.object('/ARTICLES/'+articleID+'/galleryID/',{preserveSnapshot:true});
-    this.galleryImages.subscribe(snapshotter=>{
+    var galleryIDS= firebase.database().ref('/ARTICLES/'+articleID+'/galleryID');
+    galleryIDS.once('value').then(snapshotter=>{
       var images=[];
       var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
       galleryRef.once('value').then(snapshots=>{
@@ -117,13 +140,13 @@ export class FootballComponent implements OnInit{
         this.images=images;
         console.log(this.images.length);
         console.log(images.length);
+        this.as.setArticleImages(images);
+      }).then(()=>{
+        this.as.getArticle(articleID);
+        this.router.navigate(['football/view/',articleID]);
+      })
 
-      });
-
-    });
-    this.as.setArticleImages(this.images);
-    this.as.getArticle(articleID);
-    this.router.navigate(['football/view/',articleID]);
+    })
 
   }
 
@@ -133,6 +156,14 @@ export class FootballComponent implements OnInit{
 
   increaseClicks(articleID,numberOfClicks,category){
     var databaseRef= firebase.database().ref('/ARTICLES').child(articleID).child('numberOfClicks');
+
+    databaseRef.transaction(function(clicks) {
+
+      return (clicks || 0) + 1;
+
+    });
+
+    var databaseRef= firebase.database().ref('/MICRO-ARTICLES').child(articleID).child('numberOfClicks');
 
     databaseRef.transaction(function(clicks) {
 

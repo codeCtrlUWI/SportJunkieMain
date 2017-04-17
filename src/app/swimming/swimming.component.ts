@@ -14,6 +14,7 @@ import * as firebase from 'firebase';
   selector: 'app-swimming',
   templateUrl: './swimming.component.html',
   styleUrls: ['./swimming.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 
 
@@ -89,9 +90,11 @@ export class SwimmingComponent implements OnInit {
     farticlesref.orderByChild("numberOfClicks").on("value", function (data) {
       rArray = [];
       data.forEach(function (snapshot) {
-        let featuredData = snapshot.val();
-        rArray.push(featuredData);
-        return false;
+        if(snapshot.val().category=='Swimming') {
+          let featuredData = snapshot.val();
+          rArray.push(featuredData);
+          return false;
+        }
       });
       console.log(rArray);
       that.featuredArticles = rArray;
@@ -100,30 +103,14 @@ export class SwimmingComponent implements OnInit {
     });
 
 
-    this.addUserFavorite = this.af.database.object('/USERS/' + this.uid + '/favorites/', {preserveSnapshot: true});
-
-    this.addUserFavorite.subscribe(()=> {
-      var keysFav = [];
-      var ref = firebase.database().ref('/USERS/' + this.uid + '/favorites/');
-      ref.once('value')
-          .then((snapshots) => {
-            console.log(snapshots.val());
-            keysFav.push(snapshots.val());
-          }).then(()=> {
-        this.keys = keysFav;
-        console.log(keysFav);
-      });
-      this.cdr.markForCheck();
-
-    })
-
   }
 
 
 
   viewArticle(articleID){
-    this.galleryImages= this.af.database.object('/ARTICLES/'+articleID+'/galleryID/',{preserveSnapshot:true});
-    this.galleryImages.subscribe(snapshotter=>{
+    this.as.getArticle(articleID);
+    var galleryIDS= firebase.database().ref('/ARTICLES/'+articleID+'/galleryID');
+    galleryIDS.once('value').then(snapshotter=>{
       var images=[];
       var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
       galleryRef.once('value').then(snapshots=>{
@@ -135,12 +122,12 @@ export class SwimmingComponent implements OnInit {
         this.images=images;
         console.log(this.images.length);
         console.log(images.length);
-      });
+        this.as.setArticleImages(images);
+      }).then(()=>{
+        this.router.navigate(['swimming/view/',articleID]);
+      })
 
-    });
-    this.as.setArticleImages(this.images);
-    this.as.getArticle(articleID);
-    this.router.navigate(['swimming/view/',articleID]);
+    })
   }
 
   viewProfile(){
@@ -149,6 +136,14 @@ export class SwimmingComponent implements OnInit {
 
   increaseClicks(articleID,numberOfClicks,category){
     var databaseRef= firebase.database().ref('/ARTICLES').child(articleID).child('numberOfClicks');
+
+    databaseRef.transaction(function(clicks) {
+
+      return (clicks || 0) + 1;
+
+    });
+
+    var databaseRef= firebase.database().ref('/MICRO-ARTICLES').child(articleID).child('numberOfClicks');
 
     databaseRef.transaction(function(clicks) {
 
@@ -165,64 +160,6 @@ export class SwimmingComponent implements OnInit {
 
   }
 
-
-  addToFavorite(articleID){
-    this.x=0;
-    var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
-    ref.once('value')
-        .then((snapshots) => {
-          this.x=0;
-          snapshots.forEach(snapshot=>{
-            if(snapshot.val()!=articleID){
-              this.addUserFavorite.update({[this.x]:snapshot.val()});
-              this.x= this.x+1;
-            }else{
-              this.addUserFavorite.update({[snapshot.key]:articleID});
-            }
-
-          });
-          this.addUserFavorite.update({[this.x]:articleID});
-        });
-    this.favorited=1;
-  }
-
-
-  removeFavorite(articleID){
-
-    this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
-    var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
-    ref.once('value')
-        .then((snapshots) => {
-          this.x=0;
-          snapshots.forEach(snapshot=>{
-            if(snapshot.val()===articleID){
-              console.log(snapshot.val());
-              this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/'+snapshot.key);
-              this.removeUserFavorite.remove();
-              this.x= this.x+1;
-            }
-          })
-        }).then(()=>{
-      this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
-      var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
-      ref.once('value')
-          .then((snapshots) => {
-            this.x=0;
-            snapshots.forEach(snapshot=>{
-              if(snapshot.key){
-                console.log(snapshot.val());
-                this.removeUserFavorite.update({[this.x]:snapshot.val()});
-                console.log(this.x);
-                this.x= this.x+1;
-              }
-            });
-            this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/'+this.x,{preserveSnapshot:true});
-            this.removeUserFavorite.remove();
-          });
-    });
-
-    this.favorited=0;
-  }
 
 
   logout() {

@@ -44,9 +44,16 @@ const signupRoute: Routes = [
   },
   {path:'profile',component:NavbarComponent,canActivate:[AuthGuardService],
     children: [
-      {path:'',component:ViewProfileComponent}
+      {path:'',component:ViewProfileComponent},
+      {path:'view/:id',component:ViewArticleComponent}
 
       ]
+  },
+  {path:'view',component:NavbarComponent,canActivate:[AuthGuardService],
+    children: [
+      {path:':id',component:ViewArticleComponent}
+
+    ]
   },
   ];
 

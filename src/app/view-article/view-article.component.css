@@ -20,11 +20,25 @@ hr.horizon:after {
     font-size: 18px;
 }
 
-:host >>> .ui-panel .ui-panel-titlebar{
+:host /deep/ .ui-panel .ui-panel-titlebar{
     display: none !important;
     padding: 0 !important;
     border-width: 0 !important;
     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.ui-panel .ui-panel-titlebar {
+    padding: 0!important;
+}
+
+.backButton:hover{
+    background-color: red!important;
+}
+
+button:focus {outline:0;}
+
+.vegas-overlay, .vegas-slide, .vegas-slide-inner, .vegas-timer, .vegas-wrapper{
+    position: fixed;
 }
 
 .vertical-line{
@@ -108,10 +122,6 @@ hr.horizon:after {
     display:block;
 }
 
-.hvr-icon-sink-away:before{
-    content: "\f01a";
-    font-size: 17px;
-}
 
 .example-card{
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
@@ -152,3 +162,4 @@ hr.horizon:after {
 
 
 .galleria{ max-width: 60%; height: 400px; background: #000;align-items: center;margin: 0 auto}
+

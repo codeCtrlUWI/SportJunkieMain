@@ -1,12 +1,13 @@
 import {
     Component, OnInit, ElementRef, Inject, ViewEncapsulation, AfterViewChecked, DoCheck,
-    OnDestroy
+    OnDestroy, ChangeDetectorRef
 } from '@angular/core';
 import {Router, ActivatedRoute} from "@angular/router";
 import {ArticleService} from "../homepage/article.service";
-import {AngularFire, FirebaseApp} from "angularfire2/index";
+import {AngularFire, FirebaseApp, FirebaseObjectObservable} from "angularfire2/index";
 import {CredentialService} from "./credential.service";
 declare var $: any;
+declare var particleground: any;
 import { UUID } from 'angular2-uuid';
 import * as firebase from 'firebase'
 import GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
@@ -18,7 +19,7 @@ import {Message, ConfirmationService} from "primeng/primeng";
   templateUrl: './view-profile.component.html',
   styleUrls: ['./view-profile.component.css'],
   providers: [ConfirmationService],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None
 })
 export class ViewProfileComponent implements OnInit,AfterViewChecked,DoCheck,OnDestroy {
 
@@ -43,7 +44,6 @@ export class ViewProfileComponent implements OnInit,AfterViewChecked,DoCheck,OnD
   msgs: Message[] = [];
   progress;
   favArticles:any[];
-  keys:any[];
   data:any;
   cricket;
   football;
@@ -55,6 +55,8 @@ export class ViewProfileComponent implements OnInit,AfterViewChecked,DoCheck,OnD
   x;
   galleryImages;
   images;
+  favSubscribe:FirebaseObjectObservable<any[]>;
+  particles;
 
 
   public doughnutChartLabels:string[] = ['Cricket', 'Football', 'Swimming'];
@@ -65,7 +67,7 @@ export class ViewProfileComponent implements OnInit,AfterViewChecked,DoCheck,OnD
     title: {
       display: true,
       text: 'Category History Statistics',
-      fontColor:"#000000",
+      fontColor:"#ffffff",
       fontSize:25,
       fontFamily:'Open Sans',
       padding:20,
@@ -82,15 +84,22 @@ export class ViewProfileComponent implements OnInit,AfterViewChecked,DoCheck,OnD
         fontFamily:'Open Sans',
         padding:40,
         fontStyle:'bold',
-        fontColor:"#000000",
+        fontColor:"#ffffff",
       },
       position:'bottom',
     }
   };
 
   constructor(private confirmationService: ConfirmationService,private credentials:CredentialService, private as: ArticleService, private af:AngularFire, private route:ActivatedRoute, private router:Router,@Inject(FirebaseApp) firebaseApp:any,
-              ) {
+             private cdr:ChangeDetectorRef) {
 
+    this.cdr.markForCheck();
+
+    this.router.events.subscribe(path => {
+      console.log('path = ', path);
+      if(path.url!='/profile'){
+    }
+    });
 
 
     this.msgs=[];
@@ -123,12 +132,12 @@ var keys=[];
     var that=this;
 
 
-    var favSubscribe= this.af.database.object('/USERS/'+this.uid+'/favorites');
+    this.favSubscribe= this.af.database.object('/USERS/'+this.uid+'/favorites');
 
-    favSubscribe.subscribe(()=>{
+    this.favSubscribe.subscribe(()=>{
+      keys=[];
       var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
       ref.on('value', (snapshot) => {
-        keys=[];
         console.log(snapshot.val());
         this.nullcheck= snapshot.val();
         for(var i in snapshot.val()){
@@ -137,13 +146,11 @@ var keys=[];
             keys.unshift(snap.val());
           });
         }
-      return Promise.resolve(keys);
-        });
+      });
       setTimeout(()=>{
         this.favArticles= keys;
-      },300);
-      });
-
+      },100);
+    });
 
 
     var cricketref= firebase.database().ref('/USERS/'+this.uid+'/categoriesClicked/Cricket');
@@ -181,15 +188,19 @@ var keys=[];
   }
 
   ngOnInit() {
+    $("#background").vegas({
+      delay: 9000,
+      slides: [
+        { src: "/assets/gayle.jpg" },
+        { src: "/assets/swim.jpg" },
+        { src: "/assets/afootball2.jpg" },
+      ],
+      overlay:'https://cdnjs.cloudflare.com/ajax/libs/vegas/2.4.0/overlays/06.png'
+
+    });
   }
 
   ngAfterViewChecked(){
-
-    $('#particleRow').particleground(
-        {
-          dotColor: 'black',
-          lineColor:'#c91010'
-        });
   }
 
   ngDoCheck() {
@@ -375,15 +386,11 @@ var keys=[];
 
   }
 
-  ngOnDestroy(){
-
-  }
-
 
   viewArticle(articleID,category){
-
-    this.galleryImages= this.af.database.object('/ARTICLES/'+articleID+'/galleryID/',{preserveSnapshot:true});
-    this.galleryImages.subscribe(snapshotter=>{
+    this.as.getArticle(articleID);
+    var galleryIDS= firebase.database().ref('/ARTICLES/'+articleID+'/galleryID');
+    galleryIDS.once('value').then(snapshotter=>{
       var images=[];
       var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
       galleryRef.once('value').then(snapshots=>{
@@ -392,28 +399,31 @@ var keys=[];
           console.log(snapshot.val());
         })
       }).then(()=>{
-        this.as.setArticleImages(images);
         this.images=images;
         console.log(this.images.length);
         console.log(images.length);
-      });
+        this.as.setArticleImages(images);
+      }).then(()=>{
+        if(category=='Cricket'){
+          this.router.navigate(['cricket/view/',articleID]);
+        }else if(category=='Football'){
+          this.router.navigate(['football/view/',articleID]);
+        }else if(category=='Swimming'){
+          this.router.navigate(['swimming/view/',articleID]);
+        }
+      })
 
     });
 
 
 
-    if(category=='Cricket'){
-      this.as.getArticle(articleID);
-      this.router.navigate(['cricket/view/',articleID]);
-    }else if(category=='Football'){
-      this.as.getArticle(articleID);
-      this.router.navigate(['football/view/',articleID]);
-    }else if(category=='Swimming'){
-      this.as.getArticle(articleID);
-      this.router.navigate(['swimming/view/',articleID]);
-    }
-
   }
+
+  ngOnDestroy(){
+    this.favSubscribe.subscribe().unsubscribe();
+    $("#background").vegas('destroy');
+  }
+
 
   removeFavorite(articleID){
 
@@ -431,22 +441,25 @@ var keys=[];
               }
             })
           }).then(()=>{
-        this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
-        var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
-        ref.once('value')
-            .then((snapshots) => {
-              this.x=0;
-              snapshots.forEach(snapshot=>{
-                if(snapshot.key){
-                  console.log(snapshot.val());
-                  this.removeUserFavorite.update({[this.x]:snapshot.val()});
-                  console.log(this.x);
-                  this.x= this.x+1;
-                }
-              });
-              this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/'+this.x,{preserveSnapshot:true});
-              this.removeUserFavorite.remove();
+            setTimeout(()=>{
+              this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
+              var ref= firebase.database().ref('/USERS/'+this.uid+'/favorites/');
+              ref.once('value')
+                  .then((snapshots) => {
+                    this.x=0;
+                    snapshots.forEach(snapshot=>{
+                      if(snapshot.key){
+                        console.log(snapshot.val());
+                        this.removeUserFavorite.update({[this.x]:snapshot.val()});
+                        console.log(this.x);
+                        this.x= this.x+1;
+                      }
+                    });
+                    this.removeUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/'+this.x,{preserveSnapshot:true});
+                    this.removeUserFavorite.remove();
+                  });
             });
+
       });
   }
 

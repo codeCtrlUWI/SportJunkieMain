@@ -6,19 +6,17 @@ export class ArticleService {
   article: FirebaseObjectObservable<any>;
   constructor(private af: AngularFire) { }
 
-  getArticle(aritcleId): Promise<FirebaseObjectObservable<any>>{
+  getArticle(aritcleId): void{
 
     this.af.database.object('/ARTICLES/'+aritcleId).subscribe(article => {
       this.article=article;
-      localStorage.setItem('currentArticle', JSON.stringify({anArticle: article}));
+      sessionStorage.setItem('currentArticle', JSON.stringify({anArticle: article}));
       });
-
-    return Promise.resolve(this.article);
 
 }
 
 setArticleImages(articleImages){
-  localStorage.setItem('articleImages', JSON.stringify({articleImageDem: articleImages}));
+  sessionStorage.setItem('images', JSON.stringify({articleImages: articleImages}));
 }
 
 }

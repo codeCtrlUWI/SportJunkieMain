@@ -13,20 +13,20 @@
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
+      <a class="navbar-brand" href="#/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
       <div class="collapse navbar-collapse d-flex justify-content-start"  id="navbarNavDropdown">
         <ul class="navbar-nav" style="margin-left: 40px;font-size: 16px;font-weight: bold;font-family: 'Open Sans', sans-serif;">
           <li class="nav-item p-2">
-            <a  class="nav-link hvr-pop" href="/home">Home</a>
+            <a  class="nav-link hvr-pop" href="#/home">Home</a>
           </li>
           <li class="nav-item p-2">
-            <a class="nav-link hvr-pop" href="/cricket">Cricket</a>
+            <a class="nav-link hvr-pop" href="#/cricket">Cricket</a>
           </li>
           <li class="nav-item p-2">
-            <a class="nav-link hvr-pop" href="/football">Football</a>
+            <a class="nav-link hvr-pop" href="#/football">Football</a>
           </li>
           <li class="nav-item active p-2">
-            <a class="nav-link hvr-pop" href="/swimming">Swimming</a>
+            <a class="nav-link hvr-pop" href="#/swimming">Swimming</a>
           </li>
         </ul>
       </div>
@@ -75,8 +75,8 @@
             <hr *ngIf="starter.articleID" style="width: 90%;margin-left: 20px;background-color: white">
           </div>
           <ol style="background-color: #971313; font-family: 'Open Sans',sans-serif ">
-            <div *ngFor="let featured of featuredArticles|slice:0:10">
-              <li *ngIf="featured.category=='Swimming'" id="featuredItems" style="margin-top: 20px;cursor: pointer;width: 100%;color: white;line-height: 5px;text-overflow: ellipsis;"  (click)="increaseClicks(featured.articleID,featured.numberOfClicks);viewArticle(featured.articleID)">
+            <div *ngFor="let featured of featuredArticles|slice:0:6">
+              <li id="featuredItems" style="margin-top: 20px;cursor: pointer;width: 100%;color: white;line-height: 5px;text-overflow: ellipsis;"  (click)="increaseClicks(featured.articleID,featured.numberOfClicks,featured.category);viewArticle(featured.articleID)">
                 <div *ngIf="featured.articleID" >
                   <img style="display:inline-block;margin-left: 3%" class="img-circle" [src]="featured.urlToImage">
                   <div style="display: inline-block;position: relative;width: 62%;margin-top: 13px;margin-bottom: 20px;vertical-align: middle">

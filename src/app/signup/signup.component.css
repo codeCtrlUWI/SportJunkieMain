@@ -59,6 +59,10 @@ html, body {
     color: black;
 }
 
+:host /deep/ .signinbutton{
+    text-align: center;
+}
+
 .signinbutton:enabled{
     -webkit-transition: background-color 1s; /* Safari */
     transition: background-color 1s;

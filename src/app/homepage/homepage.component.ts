@@ -16,6 +16,7 @@ import * as firebase from 'firebase'
   selector: 'app-homepage',
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.css'],
+    encapsulation: ViewEncapsulation.None
 })
 
 
@@ -37,11 +38,13 @@ export class HomepageComponent implements OnInit{
     pushArray:any[];
     galleryImages;
     images;
+    scores;
+    i;
 
 
     user: FirebaseObjectObservable<any>;
 
-  constructor(private as:ArticleService, private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any,private zone: NgZone) {
+  constructor(private as:ArticleService, private af:AngularFire, private router:Router, @Inject(FirebaseApp) firebaseApp:any,private zone: NgZone,private cdr:ChangeDetectorRef) {
 
 
 
@@ -63,6 +66,23 @@ export class HomepageComponent implements OnInit{
           console.log(this.articles);
           this.articles.reverse();
       });
+
+
+      var score= firebase.database().ref('/SCORES');
+      score.on('value', (snap) => {
+          // snap.val() comes back as an object with keys
+          // these keys need to be come "private" properties
+          let data = snap.val();
+          let dataWithKeys = Object.keys(data).map((key) => {
+              var obj = data[key];
+              obj._key = key;
+              return obj;
+          });
+          this.scores=dataWithKeys; // This is a synchronized array
+          console.log(this.scores);
+          this.scores.reverse();
+      });
+
   }
 
   ngOnInit(){
@@ -101,7 +121,6 @@ export class HomepageComponent implements OnInit{
 
 
 
-
       };
 
 
@@ -118,9 +137,8 @@ export class HomepageComponent implements OnInit{
 
 
     viewArticle(articleID){
-
-        this.galleryImages= this.af.database.object('/ARTICLES/'+articleID+'/galleryID/',{preserveSnapshot:true});
-        this.galleryImages.subscribe(snapshotter=>{
+        var galleryIDS= firebase.database().ref('/ARTICLES/'+articleID+'/galleryID');
+        galleryIDS.once('value').then(snapshotter=>{
             var images=[];
             var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
             galleryRef.once('value').then(snapshots=>{
@@ -132,12 +150,13 @@ export class HomepageComponent implements OnInit{
                 this.images=images;
                 console.log(this.images.length);
                 console.log(images.length);
-            });
+                this.as.setArticleImages(images);
+            }).then(()=>{
+                this.as.getArticle(articleID);
+                this.router.navigate(['home/view/',articleID]);
+            })
 
-        });
-        this.as.setArticleImages(this.images);
-        this.as.getArticle(articleID);
-        this.router.navigate(['swimming/view/',articleID]);
+        })
     }
 
     viewProfile(){
@@ -146,6 +165,14 @@ export class HomepageComponent implements OnInit{
 
     increaseClicks(articleID,numberOfClicks,category){
         var databaseRef= firebase.database().ref('/ARTICLES').child(articleID).child('numberOfClicks');
+
+        databaseRef.transaction(function(clicks) {
+
+            return (clicks || 0) + 1;
+
+        });
+
+        var databaseRef= firebase.database().ref('/MICRO-ARTICLES').child(articleID).child('numberOfClicks');
 
         databaseRef.transaction(function(clicks) {
 

@@ -1,25 +1,26 @@
-<div style="background-color: darkgray;height: 100%;width: 100%" class="container-fluid">
+<div style="height: 100%;width: 100%;z-index: 100" class="container-fluid">
 
+    <div style="position: fixed;width: 100%;height: 100%" id="background"></div>
 
     <div class="row" style="background-color:darkgray;margin-bottom: 20px">
         <nav class="navbar navbar-toggleable-xl navbar-inverse bg-inverse fixed-top" >
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand" href="/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
+            <a class="navbar-brand" href="#/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
             <div class="collapse navbar-collapse d-flex justify-content-start"  id="navbarNavDropdown">
                 <ul class="navbar-nav" style="margin-left: 40px;font-size: 16px;font-weight: bold;font-family: 'Open Sans', sans-serif;">
                     <li class="nav-item p-2">
-                        <a  class="nav-link hvr-pop" href="/home">Home</a>
+                        <a  class="nav-link hvr-pop" href="#/home">Home</a>
                     </li>
                     <li class="nav-item p-2">
-                        <a class="nav-link hvr-pop" href="/cricket">Cricket</a>
+                        <a class="nav-link hvr-pop" href="#/cricket">Cricket</a>
                     </li>
                     <li class="nav-item p-2">
-                        <a class="nav-link hvr-pop" href="/football">Football</a>
+                        <a class="nav-link hvr-pop" href="#/football">Football</a>
                     </li>
                     <li class="nav-item p-2">
-                        <a class="nav-link hvr-pop" href="/swimming">Swimming</a>
+                        <a class="nav-link hvr-pop" href="#/swimming">Swimming</a>
                     </li>
                 </ul>
             </div>
@@ -33,13 +34,15 @@
         </nav>
     </div>
 
+
     <div style="background-color: darkgray" class="row">
-    <div class="col col-2 col-sm-2 col-md-2">
+    <div  class="col col-2 col-sm-2 col-md-2">
+        <button class="backButton" (click)="goBack()" style="top:50%;position: fixed;background-color: white;margin-left: 5%" md-fab><md-icon>arrow_back</md-icon></button>
     </div>
-    <div style="margin-top: 80px;margin-bottom: 80px" class="col col-8 col-sm-8 col-md-8" id="panel">
-    <p-panel styleClass="ui-panel ui-panel-titlebar" id="actualPanel">
-        <i pTooltip="Click to add to favorites" style="cursor: pointer;position: absolute;left: 93%;font-size: 50px;z-index: 100" *ngIf="favorited==0"  (click)="addToFavorite(article.articleID)"  class="material-icons ">favorite_border</i>
-        <i pTooltip="Click to remove from favorites" style="color: #e01818;cursor: pointer;position: absolute;left: 93%;font-size: 50px;z-index: 100"  *ngIf="favorited==1" (click)="removeFavorite(article.articleID)" class="material-icons ">favorite</i>
+    <div style="margin-top: 80px;margin-bottom: 80px;opacity: 0.95" class="col col-8 col-sm-8 col-md-8" id="panel">
+    <p-panel class="ui-panel ui-panel-titlebar" id="actualPanel">
+        <i pTooltip="Click to add to favorites" style="cursor: pointer;position: absolute;left: 91%;font-size: 50px;z-index: 100" *ngIf="favorited==0"  (click)="addToFavorite(article.articleID)"  class="material-icons ">favorite_border</i>
+        <i pTooltip="Click to remove from favorites" style="color: #e01818;cursor: pointer;position: absolute;left: 91%;font-size: 50px;z-index: 100"  *ngIf="favorited==1" (click)="removeFavorite(article.articleID)" class="material-icons ">favorite</i>
         <div style="display: inline-block;margin-bottom: 40px;width: auto;max-width:90%;z-index: 2" class="container-fluid">
         <p style="display:inline-block;font-family:'Open Sans', sans-serif;font-weight: 800;font-size: 45px;margin: 0!important;"> {{article.title}}</p>
             <hr style="display: inline-block;width: 100%" class="horizontal">
@@ -52,9 +55,6 @@
     <p style="margin-left: 15px; display: inline-block; font-family: 'Open Sans';line-height: 24px;font-size: 17px;font-weight: 500" *ngIf="article">Written By: {{article.authorFname}} {{article.authorLname }} </p>
        <br><br><br>
         <a style="display:inline-block; font-family: 'Open Sans';line-height: 24px;font-size: 17px;font-weight: 500" *ngIf="article">Date Created: {{article.timeAndDateCreated}}</a>
-        <div style="display: inline-block; height: 40px!important;margin-left: 10px;margin-right: 10px;font-size: 30px;vertical-align: middle" class="vertical-line"></div>
-        <p style="margin-left: 10px; display: inline-block; font-family: 'Open Sans';line-height: 24px;font-size: 17px;font-weight: 500" *ngIf="article">Last Updated: {{article.lastUpdated}}</p>
-
 
  <br><br>
         <hr class="horizon" style="margin-bottom: 50px">
@@ -74,4 +74,4 @@
 
     </div>
 </div>
-
+<router-outlet></router-outlet>

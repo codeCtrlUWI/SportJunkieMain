@@ -1,5 +1,5 @@
 import 'rxjs/add/operator/switchMap';
-import {Component, OnInit, ElementRef, OnDestroy, AfterViewChecked, NgZone} from '@angular/core';
+import {Component, OnInit, ElementRef, OnDestroy, AfterViewChecked, NgZone, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Params, Router, NavigationEnd, NavigationStart} from '@angular/router';
 import { FirebaseObjectObservable, AngularFire} from 'angularfire2';
 import {Location }  from '@angular/common';
@@ -7,18 +7,18 @@ import {ArticleService} from "../homepage/article.service";
 import * as firebase from 'firebase'
 declare var $: any;
 declare var Galleria: any;
-import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   moduleId: module.id,
   selector: 'app-view',
   templateUrl: './view-article.component.html',
-  styleUrls:['./view-article.component.css']
+  styleUrls:['./view-article.component.css'],
+  encapsulation:ViewEncapsulation.None
 })
 
 
 
-export class ViewArticleComponent implements OnInit,AfterViewChecked{
+export class ViewArticleComponent implements OnInit{
 
 
   uid;
@@ -45,23 +45,18 @@ export class ViewArticleComponent implements OnInit,AfterViewChecked{
 
 
 
-  article:any;
+  article;
 
-  constructor(private af:AngularFire, private as: ArticleService, private route:ActivatedRoute, private location: Location,private element: ElementRef, private router:Router, private cdr:ChangeDetectorRef){
+  constructor(private af:AngularFire, private as: ArticleService, private route:ActivatedRoute, private location: Location,private element: ElementRef, private router:Router){
     this.scrollUp = this.router.events.subscribe((path) => {
       element.nativeElement.scrollIntoView();
-
-
-
-    });
-
-
+    })
 
 
   }
+
+
   ngOnInit(){
-
-
 
     this.af.auth.subscribe(authData=>this.uid = authData.uid);
     this.show = 1;
@@ -72,7 +67,7 @@ export class ViewArticleComponent implements OnInit,AfterViewChecked{
       this.lastName = snapshot.val().lastName;
     });
 
-    var currentUser = JSON.parse(localStorage.getItem('currentArticle'));
+    var currentUser = JSON.parse(sessionStorage.getItem('currentArticle'));
     this.article= currentUser.anArticle;
 
     for(var i in this.article){
@@ -100,34 +95,43 @@ export class ViewArticleComponent implements OnInit,AfterViewChecked{
       });
     });
 
-    var currentUser = JSON.parse(localStorage.getItem('articleImages'));
-    this.images= currentUser.articleImageDem;
+    var getImages= JSON.parse(sessionStorage.getItem('images'));
+    this.images= getImages.articleImages;
 
-    this.galleryImages= this.af.database.object('/ARTICLES/'+this.articleID+'/galleryID/',{preserveSnapshot:true});
-    this.galleryImages.subscribe(snapshotter=>{
-      var images=[];
-      var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
-      galleryRef.once('value').then(snapshots=>{
-        snapshots.forEach(snapshot=>{
-          images.push(snapshot.val());
-          console.log(snapshot.val());
-        })
-      }).then(()=>{
-        if(images!=null){
-          this.images=images;
-          this.as.setArticleImages(images);
-        }
-        Galleria.loadTheme('https://cdnjs.cloudflare.com/ajax/libs/galleria/1.5.5/themes/classic/galleria.classic.min.js');
-        Galleria.configure({
-          lightbox: true,
-          transition: 'fade',
-          autoplay: 4000
+
+         var galleryIDS= firebase.database().ref('/ARTICLES/'+this.articleID+'/galleryID');
+      galleryIDS.once('value').then(snapshotter=>{
+        var images=[];
+        var bgimage=[];
+        var galleryRef= firebase.database().ref('/GALLERY/'+snapshotter.val());
+        galleryRef.once('value').then(snapshots=>{
+          snapshots.forEach(snapshot=>{
+            images.push(snapshot.val());
+            console.log(snapshot.val());
+            bgimage.push({src:snapshot.val()})
+          })
+        }).then(()=>{
+          if(images!=null){
+            this.images=images;
+            this.as.setArticleImages(images);
+          }
+          console.log(bgimage);
+          Galleria.loadTheme('https://cdnjs.cloudflare.com/ajax/libs/galleria/1.5.6/themes/classic/galleria.classic.min.js');
+          Galleria.configure({
+            lightbox: true,
+            transition: 'fade',
+            autoplay: 4000
+          });
+          Galleria.run('.galleria');
+          if(images.length==0){
+            this.showGallery=0;
+          }
+          $("#background").vegas({
+            slides:bgimage,
+            overlay:'https://cdnjs.cloudflare.com/ajax/libs/vegas/2.4.0/overlays/06.png'
+
+          });
         });
-        Galleria.run('.galleria');
-        if(images.length==0){
-          this.showGallery=0;
-        }
-    });
 
     this.addUserFavorite= this.af.database.object('/USERS/'+this.uid+'/favorites/',{preserveSnapshot:true});
 
@@ -207,9 +211,10 @@ export class ViewArticleComponent implements OnInit,AfterViewChecked{
     this.favorited=0;
   }
 
-  ngAfterViewChecked(){
-
+  ngOnDestroy(){
+this.favorites.subscribe().unsubscribe();
   }
+
 
 
   viewProfile(){

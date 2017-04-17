@@ -1,11 +1,11 @@
 
-<div style="color: indianred;position: absolute;margin-left: 50%;margin-top: 22%" class="la-ball-clip-rotate-multiple la-3x">
+<div style="color: indianred;position: absolute;margin-left: 50%;margin-top: 22%;z-index: -100" class="la-ball-clip-rotate-multiple la-3x">
   <div></div>
   <div></div>
   <p>Please Wait...</p>
 </div>
 
-<div style="background-color: darkgrey;height: 100%;width: 100%;position: fixed;overflow-y:auto;overflow-x:hidden;" class="container-fluid">
+<div style="height: 100%;width: 100%;position: fixed;overflow-y: auto;overflow-x:hidden;" class="container-fluid">
 
 
   <div class="row" style="margin-bottom: 50px">
@@ -13,20 +13,20 @@
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a class="navbar-brand" href="/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
+      <a class="navbar-brand" href="#/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
       <div class="collapse navbar-collapse d-flex justify-content-start"  id="navbarNavDropdown">
         <ul class="navbar-nav" style="margin-left: 40px;font-size: 16px;font-weight: bold;font-family: 'Open Sans', sans-serif;">
           <li class="nav-item p-2">
-            <a  class="nav-link hvr-pop" href="/home">Home</a>
+            <a  class="nav-link hvr-pop" href="#/home">Home</a>
           </li>
           <li class="nav-item p-2">
-            <a class="nav-link hvr-pop" href="/cricket">Cricket</a>
+            <a class="nav-link hvr-pop" href="#/cricket">Cricket</a>
           </li>
           <li class="nav-item p-2">
-            <a class="nav-link hvr-pop" href="/football">Football</a>
+            <a class="nav-link hvr-pop" href="#/football">Football</a>
           </li>
           <li class="nav-item p-2">
-            <a class="nav-link hvr-pop" href="/swimming">Swimming</a>
+            <a class="nav-link hvr-pop" href="#/swimming">Swimming</a>
           </li>
         </ul>
       </div>
@@ -43,10 +43,10 @@
 
 
 
-  <div class="row d-flex justify-content-center" id="particleRow" style="width: 110%;height: 97%;background-color: darkgrey" >
+  <div class="row d-flex justify-content-center" id="particleRow" style="width: 100%;height: 97%;z-index: 1005" >
     <div class="col col-4 col-sm-4 col-md-4"></div>
     <div style="margin-top: 2%;position: absolute;left: 15%;" class="col col-4 col-sm-4 col-md-4 ">
-    <md-card id="profileCard">
+    <md-card style="" id="profileCard">
       <md-card-content>
 <div class="d-flex justify-content-start">
         <button *ngIf="provider!='google.com'" class="editProfileButton" md-raised-button style="font-size: 15px;text-align: right;background-color: #801D1A" data-toggle="modal" data-target="#editProfile">Edit Profile</button>
@@ -58,7 +58,7 @@
       </md-card-content>
       <p style="margin-left:2px;font-family: 'Open Sans';font-size: 25px;display: block;text-align: left;margin-top: 50px;">Favorites</p>
       <div class="scrollingBox" style="overflow-y:auto;overflow-x:hidden;height: 350px;background-color: white;font-family: 'Open Sans',sans-serif">
-        <div style="text-align: left; margin-left:20px;margin-top: 10px;margin-bottom: 10px" *ngFor="let fav of favArticles" pTooltip="Author: {{fav.authorFname}} {{fav.authorLname}}" tooltipPosition="top">
+        <div style="text-align: left; margin-left:20px;margin-top: 10px;margin-bottom: 10px" *ngFor="let fav of favArticles">
           <div *ngIf="nullcheck!=null" id="favs">
             <button style="display: inline-block;color: black;float: left;margin-top: 4px" md-icon-button [mdMenuTriggerFor]="menu">
               <md-icon>more_vert</md-icon>
@@ -85,7 +85,8 @@
 </div>
     </md-card>
     </div>
-    <div style="position: absolute;margin-top: 4%;margin-left: 10%"  class="col col-4 col-sm-4 col-md-4 container-fluid">
+
+    <div style="position: absolute;margin-top: 4%;margin-left: 10%;"  class="col col-4 col-sm-4 col-md-4 container-fluid">
       <canvas *ngIf="isDataAvailable" baseChart style="width: auto;margin-top: 10%;margin-left: 30%"
               [data]="doughnutChartData"
               [labels]="doughnutChartLabels"
@@ -97,13 +98,15 @@
 
 
 
-<p-confirmDialog styleClass="ui-confirmdialog" width="300px" #yo icon="fa fa-question-circle"></p-confirmDialog>
+<p-confirmDialog styleClass="ui-confirmdialog" appendTo="body" width="300px" #yo icon="fa fa-question-circle"></p-confirmDialog>
 
   </div>
 
-<div style="z-index: 10000;position: absolute" id="message"><p-growl  [value]="msgs"></p-growl></div>
+<div style="width: 100%;height: 100%;position: fixed;display: block;z-index: -5;margin-top: 30px" id="background"></div>
 
-<div style=" z-index: 10000 !important;margin-left: 60px" class="modal bd-example-modal-lg fade" id="editProfile" tabindex="-1" role="dialog" aria-labelledby="editProfile" aria-hidden="true">
+<div style="z-index: 100000000!important;position: absolute" id="message"><p-growl  [value]="msgs"></p-growl></div>
+
+<div style=" z-index: 100000 !important;margin-left: 60px" class="modal bd-example-modal-lg fade" id="editProfile" tabindex="-1" role="dialog" aria-labelledby="editProfile" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -167,7 +170,4 @@
     </div>
   </div>
 </div>
-
-
-
 <router-outlet></router-outlet>

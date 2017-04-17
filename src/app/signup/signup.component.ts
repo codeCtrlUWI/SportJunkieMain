@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from "@angular/core";
+import {Component, Inject, OnInit, ViewEncapsulation} from "@angular/core";
 import {AngularFire, FirebaseApp, FirebaseListObservable, FirebaseObjectObservable} from "angularfire2";
 import {Router} from "@angular/router";
 import * as firebase from 'firebase'
@@ -15,7 +15,8 @@ declare var $:any;
     moduleId: module.id,
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.css']
+  styleUrls: ['./signup.component.css'],
+    encapsulation: ViewEncapsulation.None
 })
 
 
@@ -54,6 +55,7 @@ export class SignupComponent implements OnInit{
     tokenData;
     googleUID;
     data;
+    authorExist;
 
     private  pathToImg;
 
@@ -91,29 +93,29 @@ export class SignupComponent implements OnInit{
         var that = this;
         this.firebaseApp.auth().signInWithPopup(this.googleProvider)
             .then(function (result) {
-                    var token = result.credential.accessToken;
-                    that.credentials.storeOAuthToken(token);
-                    console.log(token);
+                var token = result.credential.accessToken;
+                that.credentials.storeOAuthToken(token);
+                console.log(token);
                 console.log(result);
                 event.preventDefault();
-                    $.getJSON('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token, function (data) {
-                        that.tokenData = data;
-                        that.firstName = data.given_name;
-                        that.lastName = data.family_name;
-                        that.email = data.email;
-                        that.profilepic = data.picture;
-                        that.afState.auth.subscribe(authData=>
-                            that.uid = authData.uid,
-                        );
-                        that.googleUID= data.id;
-                        console.log(that.firstName);
-                        console.log(that.lastName);
-                        console.log(that.email);
-                        console.log(that.profilepic);
-                        console.log(that.uid);
-                        setUser();
-                    })
+                $.getJSON('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token, function (data) {
+                    that.tokenData = data;
+                    that.firstName = data.given_name;
+                    that.lastName = data.family_name;
+                    that.email = data.email;
+                    that.profilepic = data.picture;
+                    that.afState.auth.subscribe(authData=>
+                        that.uid = authData.uid,
+                    );
+                    that.googleUID = data.id;
+                    console.log(that.firstName);
+                    console.log(that.lastName);
+                    console.log(that.email);
+                    console.log(that.profilepic);
+                    console.log(that.uid);
+                    setUser();
                 })
+            })
 
             .then((result)=> {
             })
@@ -121,34 +123,35 @@ export class SignupComponent implements OnInit{
                 console.log(error);
             });
 
-        function setUser(){
-           var snaps= that.afState.database.object('USERS/'+that.uid,{preserveSnapshot:true});
-            snaps.subscribe(snap=>{
-                that.data= snap.val().firstName;
-            });
-            if(that.data!=null){
-                navigate();
-            }else{
-                that.afState.database.object('USERS/' + that.uid).update(
-                    {
-                        email: that.email,
-                        firstName: that.firstName,
-                        lastName: that.lastName,
-                        profilePicURL: that.profilepic,
-                        uid: that.uid,
-                        author:false
+        function setUser() {
+            var snaps = that.afState.database.object('USERS/' + that.uid, {preserveSnapshot: true});
 
+            var snapref = firebase.database().ref('/USERS/' + that.uid);
+            snapref.once('value').then(snapshot=> {
+                    console.log(snapshot.val());
+                    if (snapshot.val()!=null) {
+                        that.router.navigate(['/home']);
+                        location.reload();
+                    } else if (snapshot.val()==null) {
+                        that.afState.database.object('USERS/' + that.uid).update(
+                            {
+                                email: that.email,
+                                firstName: that.firstName,
+                                lastName: that.lastName,
+                                profilePicURL: that.profilepic,
+                                uid: that.uid,
+                                author: false
+
+                            }
+                        ).then(()=>{
+                            that.router.navigate(['/home']);
+                            location.reload();
+                        });
                     }
-                ).then(result=>navigate());
-            }
-
+                }
+            )
         }
-        function navigate(){
-            that.router.navigate(['/home']);
-            location.reload();
-        }
-
-        }
+    }
 
     getFile(event:EventTarget) {
         let eventObj:MSInputMethodContext = <MSInputMethodContext> event;

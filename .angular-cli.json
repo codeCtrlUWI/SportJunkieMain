@@ -22,7 +22,7 @@
         "styles.css"
       ],
       "scripts": [
-      "jquery.particleground.min.js"
+        "jquery.particleground.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

@@ -10,25 +10,30 @@
     <div class="row justify-content-center" >
         <div class="col col-4 col-sm-4 col-md-4" ></div>
 
-        <div class="col col-4 col-sm-4 col-md-4">
+        <div class="col col-xs-4">
             <md-card class="MainCard">
                 <md-card-content>
                     <img class="JunkieImage" [src]="pathToImg" style=" display:flex;width: 100%!important;margin: auto" alt="">
 
-                    <form style="margin-left: 20%;margin-top: 5%;opacity: 10" #signInForm2='ngForm' (ngSubmit)="signIn(signInForm2, $event)" xmlns="http://www.w3.org/1999/html">
+                    <form style="text-align: center;margin-top: 6%" #signInForm2='ngForm' (ngSubmit)="signIn(signInForm2, $event)" xmlns="http://www.w3.org/1999/html">
                         <input style="width:70%;padding-bottom: 7px" type="email" pInputText name="email" id="emailForSignin" (ngModel)="email" placeholder="Enter Email..." required/><br><br>
                         <input style="width: 70%;padding-bottom: 7px" type="password" pInputText name="password" id="passwordForSignin" (ngModel)="password" placeholder="Enter Password..." required/><br><br>
-                        <button class="signinbutton" md-raised-button type="submit" style="margin-left: 26%; width: 30px!important;color: white; margin-top:5%;font-size: 16px;font-family:'Audiowide',cursive " [disabled]="!signInForm2.valid" >Sign In</button>
+
+                        <div style="text-align: center">
+                            <button class="signinbutton" md-raised-button type="submit" style="width: 100px!important;color: white;font-size: 16px;font-family:'Audiowide',cursive;display: block;margin: 0 auto" [disabled]="!signInForm2.valid" >Sign In</button>
+                        </div>
+
+
                     </form>
                     <hr class="horizontal1">
 
-                    <div class="btn btn-block btn-social btn-google" style="width: 40%;margin: 0 auto" (click)="googleSignup($event)">
-                        <span class="fa fa-google"></span>
-                        <h6 style="margin-left: 6%">Sign in with Google</h6>
+                    <div class="btn btn-block btn-social btn-google" style="width: 200px;margin: 0 auto" (click)="googleSignup($event)">
+                        <span style="margin-right: 5px;" class="fa fa-google"></span>
+                        <h6 style="margin-left: 5px">Sign in with Google</h6>
                     </div>
                     <br>
                     <hr class="horizontal1">
-                    <button type="button" class="btn btn-primary" style="width: 40%;text-align: center;margin-left: 30%;margin-top: 3%" data-toggle="modal" data-target="#signup">
+                    <button type="button" class="btn btn-primary" style="width: 200px;margin:0 auto;display: block" data-toggle="modal" data-target="#signup">
                         <h6> Sign up using Email</h6>
                     </button><br>
                 </md-card-content>

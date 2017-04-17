@@ -11,22 +11,22 @@
   <div class="row" style="margin-bottom: 100px">
     <nav class="navbar navbar-toggleable-xl navbar-inverse bg-inverse fixed-top" >
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <a class="navbar-brand" href="/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
+      <span class="navbar-toggler-icon"></span>
+    </button>
+      <a class="navbar-brand" href="#/home" style="margin-left:10px;font-family: 'Audiowide',cursive">SportJunkie™</a>
       <div class="collapse navbar-collapse d-flex justify-content-start"  id="navbarNavDropdown">
         <ul class="navbar-nav" style="margin-left: 40px;font-size: 16px;font-weight: bold;font-family: 'Open Sans', sans-serif;">
           <li class="nav-item p-2">
-            <a  class="nav-link hvr-pop" href="/home">Home</a>
+            <a  class="nav-link hvr-pop" href="#/home">Home</a>
           </li>
           <li class="nav-item p-2">
-            <a class="nav-link hvr-pop" href="/cricket">Cricket</a>
+            <a class="nav-link hvr-pop" href="#/cricket">Cricket</a>
           </li>
           <li class="nav-item active p-2">
-            <a class="nav-link hvr-pop" href="/football">Football</a>
+            <a class="nav-link hvr-pop" href="#/football">Football</a>
           </li>
           <li class="nav-item p-2">
-            <a class="nav-link hvr-pop" href="/swimming">Swimming</a>
+            <a class="nav-link hvr-pop" href="#/swimming">Swimming</a>
           </li>
         </ul>
       </div>
@@ -44,10 +44,32 @@
 
 
   <div style="background-color: darkgrey!important;" class="row">
-    <div class="col col-4 col-sm-4 col-md-4">
+    <div class="col col-3 col-sm-3 col-md-3" style="position: fixed;left: 0;overflow-y: auto;height: 88%" id="scrollingCard">
 
+      <p-tabView>
+        <p-tabPanel header="Football Scores">
+          <div *ngFor="let score of scores">
+            <div *ngIf="score.category=='Football'">
+              <div style="font-size: 16px;font-family: 'Open Sans', sans-serif">
+                <p style="text-align: center;font-size: 22px"> {{score.team1}} VS {{score.team2}}</p>
+                <div style="border:2px solid white;">
+                  <div style="margin-left: 5px;margin-top: 5px">
+                    <p>Status: {{score.status}}</p>
+                    <p>Team 1: {{score.team1}}</p>
+                    <p>Team 1 Score: {{score.team1Score}}</p>
+                    <p>Team 2: {{score.team2}}</p>
+                    <p>Team 2 Score: {{score.team2Score}}</p>
+                  </div>
+                </div>
+                <hr style="width: 100%;background-color: white">
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
     </div>
-    <div  style="font-family: 'Open Sans',sans-serif" class="col col-5 col-sm-5 col-md-5">
+
+    <div  style="font-family: 'Open Sans',sans-serif;left:30%" class="col col-5 col-sm-5 col-md-5">
       <div *ngFor="let starter of articles|slice:0:1">
         <h4 *ngIf="starter.articleID" style="font-family: 'Open Sans',sans-serif;font-size: 26px;margin-bottom: 0!important;">Latest Articles </h4>
         <hr *ngIf="starter.articleID"  style="width: 100%;background-color: black;margin-bottom: 25px">
@@ -75,8 +97,8 @@
             <hr *ngIf="starter.articleID" style="width: 90%;margin-left: 20px;background-color: white">
           </div>
           <ol style="background-color: #971313; font-family: 'Open Sans',sans-serif ">
-            <div *ngFor="let featured of featuredArticles|slice:0:10">
-            <li *ngIf="featured.category=='Football'" id="featuredItems" style="margin-top: 20px;cursor: pointer;width: 100%;color: white;line-height: 5px;text-overflow: ellipsis;"  (click)="increaseClicks(article.articleID,article.numberOfClicks,article.category);viewArticle(article.articleID)" >
+            <div *ngFor="let featured of featuredArticles|slice:0:6">
+            <li id="featuredItems" style="margin-top: 20px;cursor: pointer;width: 100%;color: white;line-height: 5px;text-overflow: ellipsis;"  (click)="increaseClicks(featured.articleID,featured.numberOfClicks,featured.category);viewArticle(featured.articleID)" >
               <div *ngIf="featured.articleID" >
               <img style="display:inline-block;margin-left: 3%" class="img-circle" [src]="featured.urlToImage">
                 <div style="display: inline-block;position: relative;width: 62%;margin-top: 13px;margin-bottom: 20px;vertical-align: middle">
